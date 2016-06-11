@@ -20,6 +20,9 @@ class IndexController extends KsfController
 
     public function testAction()
     {
-        echo "testAction";
+//        $view = $this->getView();
+//        $view->display('test.html');
+
+        var_dump(ob_get_level());
     }
 }

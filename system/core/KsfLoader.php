@@ -41,8 +41,8 @@ class KsfLoader
      */
     public function composer_autoload()
     {
-        if(file_exists(SYS_PATH.'vendor/autoload.php'))
-            include_once SYS_PATH.'vendor/autoload.php';
+        if(file_exists(SYS_PATH.'/../vendor/autoload.php'))
+            include_once SYS_PATH.'/../vendor/autoload.php';
     }
 
     /**

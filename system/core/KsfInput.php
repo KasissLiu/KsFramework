@@ -12,12 +12,33 @@ class KsfInput
     private $get = null;
     private $post = null;
 
-    public function __construct()
-    {
-        $this->get = $_GET;
-        $this->post = $_POST;
+    const DEFAULT_MODE = 1;
+    const ORIGINAL_MODE = 2;
+    const REWRITE_MODE = 3;
 
-        $this->filter();
+    public function __construct(KsfDispatcher $dispatcher,$uri_mode=1,$validation=1)
+    {
+
+        $this->get = $dispatcher->get;
+        $this->post = $dispatcher->post;
+
+        switch($uri_mode)
+        {
+            case self::DEFAULT_MODE :
+                $this->default_mode($dispatcher);
+                break;
+            case self::ORIGINAL_MODE :
+                $this->original_mode($dispatcher);
+                break;
+            case self::REWRITE_MODE :
+                $this->rewrite_mode($dispatcher);
+                break;
+            default :
+
+
+        }
+        if($validation)
+            $this->filter();
 
         return $this;
     }
@@ -39,6 +60,27 @@ class KsfInput
                 $val = addslashes($val);
             }
         }
+    }
+
+
+    private function default_mode(KsfDispatcher $dispatcher)
+    {
+        $path = trim($dispatcher->path,'/');
+        if(isset($this->get[$path]))
+            unset($this->get[$path]);
+    }
+
+    private function original_mode(KsfDispatcher $dispatcher)
+    {
+        if(isset($this->get['r']))
+            unset($this->get['r']);
+    }
+
+    private function rewrite_mode(KsfDispatcher $dispatcher)
+    {
+        $path = trim($dispatcher->path,'/');
+        if(isset($this->get[$path]))
+            unset($this->get[$path]);
     }
 
 

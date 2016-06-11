@@ -14,15 +14,16 @@ class Ksf
     private $app_name;
 
     private $router;
-
+    private $input;
+    private $render;
+    private $exception;
+    private $error;
 
     private $actController;
     private $actAction;
 
 
-    private $input;
-
-    private static $dispatcher;
+    private $dispatcher;
 
     private static $_instance;
 
@@ -33,7 +34,8 @@ class Ksf
      */
     public function __construct(KsfDispatcher $dispatcher)
     {
-        self::$dispatcher = $dispatcher;
+        $this->dispatcher = $dispatcher;
+
         if(!(self::$_instance instanceof self))
             self::$_instance = $this;
     }
@@ -54,10 +56,15 @@ class Ksf
             }
         }
 
+        $ksfConfig = KsfConfig::getInstance();
+
 
         $this->app_name = !$this->app_name ? 'KsFramework' : $this->app_name;
-        $this->router = !$this->router ? new KsfRouter(self::$dispatcher) : $this->router;
-        $this->input = !$this->input ? new KsfInput() : $this->input;
+        $this->router = !$this->router ? new KsfRouter(self::getDispatcher(),$ksfConfig->get('appRouterModule')) : $this->router;
+        $this->input = !$this->input ? new KsfInput(self::getDispatcher(),$ksfConfig->get('appRouterModule')) : $this->input;
+//        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
+        $this->exception = new KsfException();
+
 
         return $this;
     }
@@ -72,6 +79,11 @@ class Ksf
     }
 
 
+    public function __get($prop)
+    {
+        return isset($this->$prop) ? $this->$prop : null;
+    }
+
     public function run()
     {
 
@@ -82,7 +94,14 @@ class Ksf
 
 
         $run = new $actController();
-        $run->$actAction();
+
+        try {
+            $run->$actAction();
+        }catch(Exception $e)
+        {
+            $this->error = $e;
+            $this->exception->transToError($this->router);
+        }
     }
 
     private function preLoad()
@@ -95,7 +114,7 @@ class Ksf
         if(file_exists($filename))
             include_once $filename;
         else
-            throw  new Exception("Class File is Not Found!");
+            throw  new Exception("There is no {$controller}Controller!");
 
         $this->actController = $controller.'Controller';
         $this->actAction = $action.'Action';
@@ -112,13 +131,23 @@ class Ksf
     public static function getInstance()
     {
         if(!(self::$_instance instanceof self))
-            self::$_instance = new self(self::$dispatcher);
+            throw new Exception("The instance has lost!");
+
         return self::$_instance;
     }
 
     public static function get($prop)
     {
-        return self::$$prop ? self::$$prop : null;
+        return isset(self::$$prop) ? self::$$prop : null;
+    }
+
+    /**
+     * 获取保存在Ksf中的dispatcher实例
+     * @return KsfDispatcher
+     */
+    public static function getDispatcher()
+    {
+        return self::$_instance->dispatcher;
     }
     /**
      * 禁止对象被克隆

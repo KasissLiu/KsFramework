@@ -31,11 +31,21 @@ return array(
     "appDebug"          => true,
     "autoloadLibrary"   => array(),
     "appModules"        => array(),
-    "appRouterModule"   => 1,
+    "appRouterModule"   => 2,
 
-    "defaultModule"     => "Index",
+    "defaultModule"     => "index",
     "defaultController" => "index",
-    "defaultAction"     => "index"
+    "defaultAction"     => "test",
+
+    //smarty config
+    "smarty" => array(
+        "left_delimiter"=>"{%",
+        "right_delimiter"=>"%}",
+        "template_dir" => APP_PATH."views/",
+        "compiles_root" => APP_PATH."cache/smarty/compiles",
+        "cache_root" => APP_PATH."cache/smarty/cache"
+    )
+
 
 
 

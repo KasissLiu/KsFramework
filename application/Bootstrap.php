@@ -20,7 +20,7 @@ class Bootstrap
         $Ksf = Ksf::getInstance();
         $KsfConfig = KsfConfig::getInstance();
 
-        $dispatcher = Ksf::get('dispatcher');
+        $dispatcher = Ksf::getDispatcher();
 
         $router = new KsfRouter($dispatcher);
 
@@ -28,6 +28,32 @@ class Bootstrap
         $router->controller = $router->controller ? $router->controller : $KsfConfig->get("defaultController");
         $router->action = $router->action ? $router->action : $KsfConfig->get("defaultAction");
         $Ksf->set('router',$router);
+    }
+
+
+    public function _initSmarty()
+    {
+        $Ksf = Ksf::getInstance();
+        $smarty_config = KsfConfig::getInstance()->get("smarty");
+
+        $smarty = new Smarty();
+        $smarty->setLeftDelimiter($smarty_config["left_delimiter"]);
+        $smarty->setRightDelimiter($smarty_config['right_delimiter']);
+        $smarty->setTemplateDir($smarty_config["template_dir"]);
+        $smarty->setCompileDir($smarty_config["compiles_root"]);
+        $smarty->setCacheDir($smarty_config["cache_root"]);
+
+
+        //自定义template_dir
+        $router = $Ksf->router;;
+
+        if(is_dir(APP_PATH."modules/".strtolower($router->module)."/views/"))
+            $smarty->setTemplateDir(APP_PATH."modules/".strtolower($router->module)."/views/");
+
+
+        $Ksf->set('render',$smarty);
+
+
     }
 
 

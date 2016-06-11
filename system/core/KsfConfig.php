@@ -21,6 +21,8 @@ class KsfConfig
     private $autoloadLibrary = array();         //应用需要自动加载的类文件
     private $appModules = array();              //应用可用模块
 
+    private $appRouterModule = 1;               //应用路由模式
+
     private $servers = array();                 //应用所使用的链接配置
 
     private static $_instance;                  //存储单例

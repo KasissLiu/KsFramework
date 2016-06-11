@@ -25,12 +25,16 @@ class KsfRouter
     {
         $scripts = $this->getRouter($dispatcher,$uri_mode);
         $this->querys = $this->getQuerys();
-        $this->module = isset($scripts[0]) ? $scripts[0] : '';
-        $this->controller = isset($scripts[1]) ? $scripts[1] : '';
-        $this->action = isset($scripts[2]) ? $scripts[2] : '';
+
+
+
+        $this->module = isset($scripts[0]) ? $scripts[0] : KsfConfig::getInstance()->get('defaultModule');
+        $this->controller = isset($scripts[1]) ? $scripts[1] : KsfConfig::getInstance()->get('defaultController');
+        $this->action = isset($scripts[2]) ? $scripts[2] : KsfConfig::getInstance()->get('defaultAction');
 
         return $this;
     }
+
 
     public function getRouter(KsfDispatcher $dispatcher,$uri_mode)
     {
@@ -61,7 +65,9 @@ class KsfRouter
     {
         $path = trim($dispatcher->path,'/');
         $this->querys = $dispatcher->query;
-        return explode('/',$path);
+        $scripts = explode('/',$path);
+
+        return $this->rewrite_check($scripts);
     }
 
     private function original_mode(KsfDispatcher $dispatcher)
@@ -76,11 +82,15 @@ class KsfRouter
             if($route[0] == 'r')
             {
                 $this->querys = $querys;
-                return isset($route[1]) ? explode('/',$route[1]) : array();
+                $scripts = isset($route[1]) ? explode('/',$route[1]) : array();
 
+            }else{
+                $scripts = array();
             }
+        }else{
+            $scripts = array();
         }
-        return array();
+        return $this->rewrite_check($scripts);
     }
 
     private function rewrite_mode(KsfDispatcher $dispatcher)
@@ -93,19 +103,33 @@ class KsfRouter
             $this->params[$params[$i]] = $params[$i+1];
         }
         $this->querys = $dispatcher->query;
+        return $this->rewrite_check($scripts);
+    }
+
+    private function rewrite_check($scripts)
+    {
+        if(!is_array($scripts))
+            return null;
+
+        foreach($scripts as $key=>$val)
+        {
+            if($val == null)
+                unset($scripts[$key]);
+        }
         return $scripts;
     }
 
     private function getQuerys()
     {
         $tmp = array();
-        $querys = explode('&',trim($this->querys,'&'));
 
-        foreach($querys as $val)
-        {
-            $param = explode('=',$val);
-            if(count($param) > 1) {
-                $tmp[$param[0]] = $param[1];
+        $querys = is_string($this->querys) ? explode('&',trim($this->querys,'&')) : $this->querys;
+        if(is_array($querys)) {
+            foreach ($querys as $val) {
+                $param = explode('=', $val);
+                if (count($param) > 1) {
+                    $tmp[$param[0]] = $param[1];
+                }
             }
         }
         return $tmp;

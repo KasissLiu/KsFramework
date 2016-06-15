@@ -33,6 +33,7 @@ class KsfLoader
 
         spl_autoload_register(array("KsfLoader","sysAutoLoader"));
         spl_autoload_register(array("KsfLoader","appAutoLoader"));
+        spl_autoload_register(array("ksfLoader","modelAutoLoader"));
 
     }
 
@@ -70,8 +71,6 @@ class KsfLoader
     {
         if(file_exists(SYS_CORE.$class.'.php')) {
             include_once(SYS_CORE.$class.'.php');
-        }else{
-            throw new Exception("Class {$class} File is Not Found!");
         }
     }
 
@@ -83,8 +82,30 @@ class KsfLoader
     {
         if(file_exists(APP_LIBRARY.$class.'.php')) {
             include_once(APP_LIBRARY.$class.'.php');
+        }
+    }
+
+    /**
+     * 模型类 自动加载函数
+     * @param $class
+     */
+    public static function modelAutoLoader($class)
+    {
+        $path = str_replace('Model','',$class);
+        if(strpos($path,'_') > 0)
+        {
+            $file = explode('_',$path);
+            $filename = '';
+            foreach($file as $val)
+            {
+                $filename .= $val."/";
+            }
+            $filename = rtrim($filename,'/');
         }else{
-            throw new Exception("Class {$class} File is Not Found!");
+            $filename = $path;
+        }
+        if(file_exists(APP_PATH.'model/'.$filename.'.php')) {
+            include_once(APP_PATH.'model/'.$filename.'.php');
         }
     }
 

@@ -11,7 +11,6 @@ class IndexController extends KsfController
 {
     public function init()
     {
-
     }
     public function indexAction()
     {
@@ -23,6 +22,6 @@ class IndexController extends KsfController
 //        $view = $this->getView();
 //        $view->display('test.html');
 
-        var_dump(ob_get_level());
+        var_dump(new Sample_Sample_SampleModel());
     }
 }

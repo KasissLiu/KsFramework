@@ -20,12 +20,17 @@ class KsfDispatcher
 
     public function __construct()
     {
-        $uri = parse_url($_SERVER['REQUEST_URI']);
-        $this->path = isset($uri['path']) ? $uri['path'] : '' ;
-        $this->query = isset($uri['query']) ? $uri['query'] : '' ;
-        $this->post = isset($_POST) ? $_POST : null;
-        $this->files = isset($_FILES) ? $_FILES : null;
-        $this->get = isset($_GET) ? $_GET : null;
+        if(php_sapi_name() !== 'cli') {
+            $uri = parse_url($_SERVER['REQUEST_URI']);
+            $this->path = isset($uri['path']) ? $uri['path'] : '';
+            $this->query = isset($uri['query']) ? $uri['query'] : '';
+            $this->post = isset($_POST) ? $_POST : null;
+            $this->files = isset($_FILES) ? $_FILES : null;
+            $this->get = isset($_GET) ? $_GET : null;
+        }
+        if(php_sapi_name() === 'cli'){
+
+        }
     }
 
     public function __get($prop)

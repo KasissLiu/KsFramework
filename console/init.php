@@ -2,9 +2,12 @@
 /**
  * Created by PhpStorm.
  * User: kasiss
- * Date: 5/24/16
- * Time: 22:43
+ * Date: 6/12/16
+ * Time: 23:45
  */
+
+
+
 error_reporting(E_ALL);
 
 
@@ -16,4 +19,3 @@ require_once SYS_PATH."Bootstrap.php";
 
 $app = new Ksf(new KsfDispatcher());
 
-$app->Bootstrap()->run();

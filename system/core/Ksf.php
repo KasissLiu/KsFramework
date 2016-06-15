@@ -58,11 +58,12 @@ class Ksf
 
         $ksfConfig = KsfConfig::getInstance();
 
-
-        $this->app_name = !$this->app_name ? 'KsFramework' : $this->app_name;
-        $this->router = !$this->router ? new KsfRouter(self::getDispatcher(),$ksfConfig->get('appRouterModule')) : $this->router;
-        $this->input = !$this->input ? new KsfInput(self::getDispatcher(),$ksfConfig->get('appRouterModule')) : $this->input;
-//        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
+        if(php_sapi_name() !== 'cli') {
+            $this->app_name = !$this->app_name ? 'KsFramework' : $this->app_name;
+            $this->router = !$this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
+            $this->input = !$this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
+            //        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
+        }
         $this->exception = new KsfException();
 
 
@@ -121,6 +122,18 @@ class Ksf
 
     }
 
+
+    public function execute($object)
+    {
+
+        try {
+            new $object();
+        }catch(Exception $e)
+        {
+            $this->error = $e;
+            $this->exception->transToError($this->router);
+        }
+    }
 
 
 

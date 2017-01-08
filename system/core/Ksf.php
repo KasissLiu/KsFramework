@@ -123,11 +123,18 @@ class Ksf
     }
 
 
-    public function execute($object)
+    public function execute($object,$method=null,$param=null)
     {
 
         try {
-            new $object();
+             $exec_obj = new $object();
+            if($method)
+            {
+                if($param === null)
+                    $exec_obj->$method();
+                else 
+                    $exec_obj->$method($param);
+            }
         }catch(Exception $e)
         {
             $this->error = $e;

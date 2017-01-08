@@ -71,6 +71,7 @@ class KsfLoader
     {
         if(file_exists(SYS_CORE.$class.'.php')) {
             include_once(SYS_CORE.$class.'.php');
+            return true;
         }
     }
 
@@ -80,8 +81,14 @@ class KsfLoader
      */
     public static function appAutoLoader($class)
     {
+        $class= strpos($class, '_')>0 ? str_replace('_', '/', $class) : $class;
         if(file_exists(APP_LIBRARY.$class.'.php')) {
             include_once(APP_LIBRARY.$class.'.php');
+            return true;
+        }
+        if(file_exists(SYS_LIBRARY.$class.'.php')) {
+            include_once(SYS_LIBRARY.$class.'.php');
+            return true;
         }
     }
 

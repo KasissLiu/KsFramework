@@ -31,7 +31,8 @@ return array(
         "passwd"        => "123qwe",
         "dbname"        => "dbname",
         "port"          => 3306,
-        "charset"       => "utf8"
+        "charset"       => "utf8",
+        "init"          => true,
     ),
     array(
         "server"        => "server2",
@@ -41,6 +42,18 @@ return array(
         "passwd"        => "123qwe",
         "dbname"        => "dbname",
         "port"          => 3306,
-        "charset"       => "utf8"
+        "charset"       => "utf8",
+        "init"          => true,
+    ),
+    array(
+        "server"        => "mailer",
+        "type"          => "mail",
+        "smtp_server"   => "",
+        "smtp_port"     => 465,
+        "smtp_ssl"      => "",
+        "smtp_username" => "",
+        "smtp_password" => "",
+        "charset"       => "utf-8",
+        "init"          => false,
     )
 );

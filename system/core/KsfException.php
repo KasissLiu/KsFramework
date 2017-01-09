@@ -7,17 +7,20 @@
  */
 
 
-class KsfException
+class KsfException extends Exception
 {
+    public $user_error_data = null;
+    public $user_error_msg = null;
 
-    public function __construct()
+    public function __construct($msg="",$data="")
     {
+        $this->user_error_msg = $msg;
+        $this->user_error_data = $data;
         return $this;
     }
 
     /**
      * @param $router
-     * @param Exception $e
      */
     public function transToError($router)
     {
@@ -28,5 +31,19 @@ class KsfException
             echo "There is no ErrorController catch Exceptions!";
         }
 
+    }
+    
+    
+    public function executeError($instance)
+    {
+        
+        //do something when error exception occured in console
+        if(method_exists($instance, 'error'))
+        {
+            call_user_func(array(new $instance(),'error'));
+        }else{
+           echo "There is no $instance Class!";
+        }
+        
     }
 }

@@ -64,7 +64,7 @@ class Ksf
             $this->input = !$this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
             //        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
         }
-        $this->exception = new KsfException();
+//         $this->exception = new KsfException();
 
 
         return $this;
@@ -87,7 +87,7 @@ class Ksf
 
     public function run()
     {
-
+        try {
         $this->preLoad();
 
         $actController = $this->actController;
@@ -96,12 +96,15 @@ class Ksf
 
         $run = new $actController();
 
-        try {
             $run->$actAction();
-        }catch(Exception $e)
+            
+        }catch( KsfException $e)
         {
             $this->error = $e;
-            $this->exception->transToError($this->router);
+            $this->error->transToError($this->router);
+        }catch(Exception $e)
+        {
+            echo "Please Use KsfException !";
         }
     }
 
@@ -115,7 +118,7 @@ class Ksf
         if(file_exists($filename))
             include_once $filename;
         else
-            throw  new Exception("There is no {$controller}Controller!");
+            throw  new KsfException("There is no {$controller}Controller!");
 
         $this->actController = $controller.'Controller';
         $this->actAction = $action.'Action';
@@ -125,8 +128,11 @@ class Ksf
 
     public function execute($object,$method=null,$param=null)
     {
-
         try {
+            
+            if(!class_exists($object))
+                throw new KsfException('No Class Found!');
+
              $exec_obj = new $object();
             if($method)
             {
@@ -135,10 +141,14 @@ class Ksf
                 else 
                     $exec_obj->$method($param);
             }
-        }catch(Exception $e)
+        }catch( KsfException $e)
         {
             $this->error = $e;
-            $this->exception->transToError($this->router);
+            $e->executeError($object);
+        }
+        catch( Exception $e)
+        {
+           echo "Please Use KsfException !";
         }
     }
 
@@ -151,7 +161,7 @@ class Ksf
     public static function getInstance()
     {
         if(!(self::$_instance instanceof self))
-            throw new Exception("The instance has lost!");
+            throw new KsfException("The instance has lost!");
 
         return self::$_instance;
     }

@@ -127,7 +127,39 @@ class KsfConfig
             self::$_instance = new self;
         return self::$_instance;
     }
-
+    /**
+     *
+     * 自定义载入配置文件
+     */
+    public static function import($config_file,$prop_name=null)
+    {
+        $instance = self::getInstance();
+        
+        if(file_exists(ROOT_PATH."conf/".$config_file))
+            $user_config = require_once(ROOT_PATH."conf/".$config_file);
+        else
+            throw  new Exception("Config File Not Found!");
+    
+        if(is_array($user_config))
+        {
+            foreach($user_config as $prop => $value)
+            {
+                if($prop_name)
+                {
+                    if($prop_name == $prop)
+                    {
+                        $instance->set($prop,$value);
+                        break;
+                    }
+                }else{
+                    $instance->set($prop, $value);
+                }
+            }
+        }
+        
+        return $prop_name ? $instance->get($prop_name) : true;
+        
+    }
     /**
      * 禁止克隆
      */

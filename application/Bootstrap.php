@@ -72,7 +72,7 @@ class Bootstrap
                 }else{ 
                     throw new KsfException('can not make server '.$server_name);
                 }
-            }catch( KsException $e){
+            }catch( KsfException $e){
                 print_r($e->getMessage());
             }
         }

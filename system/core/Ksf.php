@@ -11,21 +11,21 @@
 
 class Ksf
 {
-    private $app_name;
+    private $app_name;  //App Name
 
-    private $router;
-    private $input;
-    private $render;
-    private $exception;
-    private $error;
+    private $router;    //App Router
+    private $input;     //App Input
+    private $render;    //App Render
+    private $exception; //App Exception
+    private $error;     //App Error Msg
 
-    private $actController;
-    private $actAction;
+    private $actController; //Request Controller
+    private $actAction;     //Request Action
 
 
-    private $dispatcher;
+    private $dispatcher;    //Request Dispatcher
 
-    private static $_instance;
+    private static $_instance;  //To Save an Instance of Ksf
 
 
     /**
@@ -39,7 +39,10 @@ class Ksf
         if(!(self::$_instance instanceof self))
             self::$_instance = $this;
     }
-
+    /**
+     * if file application/bootstrap.php exists 
+     *  to excute the methods whose name begins with '_init'  
+     */
     public function Bootstrap()
     {
 
@@ -70,7 +73,11 @@ class Ksf
         return $this;
     }
 
-
+    /**
+     * 向实例内添加自定义属性
+     * @param unknown $prop
+     * @param unknown $val
+     */
     public function set($prop,$val)
     {
 
@@ -79,12 +86,17 @@ class Ksf
         return true;
     }
 
-
+    /**
+     * 获取实例内的属性
+     * @param unknown $prop
+     */
     public function __get($prop)
     {
         return isset($this->$prop) ? $this->$prop : null;
     }
-
+    /**
+     * web请求时处理请求
+     */
     public function run()
     {
         try {

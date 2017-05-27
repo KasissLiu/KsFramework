@@ -11,9 +11,9 @@
 error_reporting(E_ALL);
 
 
-define("ROOT_PATH",__DIR__."/../");
-define("SYS_PATH",ROOT_PATH."system/");
-define("APP_PATH",ROOT_PATH."application/");
+!defined("ROOT_PATH") && define("ROOT_PATH",__DIR__."/../");
+!defined("SYS_PATH") && define("SYS_PATH",ROOT_PATH."system/");
+!defined("APP_PATH") && define("APP_PATH",ROOT_PATH."application/");
 
 require_once SYS_PATH."Bootstrap.php";
 

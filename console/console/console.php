@@ -17,9 +17,12 @@ class console extends KsfConsole
         $error = Ksf::getInstance()->error;
         print_r($error);
     }
-    public function run()
+    public function run($params='')
     {
-        var_dump(new Sample_Sample_SampleModel());
+        var_dump($params);
+        
+    }
+    public function test($param) {
+        var_dump($param);
     }
 }
-

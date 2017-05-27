@@ -139,12 +139,12 @@ class Ksf
 
 
     public function execute($object,$method=null,$param=null)
-    {
+    {  
         try {
             
             if(!class_exists($object))
                 throw new KsfException('No Class Found!');
-
+ 
              $exec_obj = new $object();
             if($method)
             {

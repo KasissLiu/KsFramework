@@ -68,7 +68,7 @@ class KsfCLI
             }
 
             //to receive command
-            if(preg_match('/^([a-z0-9A-Z_-]+):?([a-z0-9A-Z_\/]*):?([a-z0-9A-z]*)$/' , $argv,$commands)) {
+            if(preg_match('/^([a-z0-9A-Z_\-]+):?([a-z0-9A-Z_\/]*):?([a-z0-9A-z]*)$/' , $argv,$commands)) {
                 $this->command[strtolower($commands[1])] = isset($commands[2]) ? strtolower(ltrim($commands[2],':')): '';
                 $this->method = isset($commands[3]) ? $commands[3] : "";
                 continue;

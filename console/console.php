@@ -18,6 +18,6 @@ class console extends KsfConsole
     }
     public function run($param=array())
     {
-        print_r(new Sample_Sample_SampleModel());
+        echo new Example();
     }
 }

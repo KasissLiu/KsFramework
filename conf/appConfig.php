@@ -1,13 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: kasiss
- * Date: 5/25/16
- * Time: 23:40
  *
  * app配置文件
  * array(
- *     "appName"           => "kasiss",             应用名称
+ *     "appName"           => "appname",            应用名称
  *     "appLibraryPath"    => APP_PATH."lirary",    类库地址
  *     "appCachePath"      => APP_PATH."cache",     缓存地址
  *     "appDebug"          => true,                 调试模式
@@ -24,7 +20,7 @@
  */
 
 return array(
-    "appName"           => "kasiss",
+    "appName"           => "Ksf",
     "appLibraryPath"    => APP_PATH."lirary",
     "appCachePath"      => APP_PATH."cache",
 

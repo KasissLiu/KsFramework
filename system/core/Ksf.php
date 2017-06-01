@@ -143,16 +143,18 @@ class Ksf
         try {
             
             if(!class_exists($object))
-                throw new KsfException('No Class Found!');
+                throw new KsfException('No Class {'.$object.'} Found!');
  
              $exec_obj = new $object();
-            if($method)
+
+            if(!$method)
             {
-                if($param === null)
-                    $exec_obj->$method();
-                else 
-                    $exec_obj->$method($param);
+                $method = 'run';
             }
+            if(!method_exists($exec_obj,$method)) {
+                    throw new KsfException('No Method {'.$method.'} Found!');
+            }
+                    $exec_obj->$method($param);
         }catch( KsfException $e)
         {
             $this->error = $e;

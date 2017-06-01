@@ -1,9 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: kasiss
- * Date: 5/26/16
- * Time: 00:02
  *
  * server 配置文件
  * 以mysql配置为例
@@ -28,7 +24,7 @@ return array(
         "type"          => "mysql",
         "host"          => "localhost",
         "user"          => "root",
-        "passwd"        => "123qwe",
+        "passwd"        => "",
         "dbname"        => "dbname",
         "port"          => 3306,
         "charset"       => "utf8",
@@ -39,7 +35,7 @@ return array(
         "type"          => "mysql",
         "host"          => "localhost",
         "user"          => "root",
-        "passwd"        => "123qwe",
+        "passwd"        => "",
         "dbname"        => "dbname",
         "port"          => 3306,
         "charset"       => "utf8",

@@ -1,9 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: kasiss
- * Date: 5/29/16
- * Time: 21:26
  *
  * 启动类
  * 将在Ksf->bootstrap()时被调用

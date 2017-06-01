@@ -68,7 +68,7 @@ class KsfCLI
             }
 
             //to receive command
-            if(preg_match('/^([a-z0-9A-Z_\-]+):?([a-z0-9A-Z_\/]*):?([a-z0-9A-z]*)$/' , $argv,$commands)) {
+            if(preg_match('/^([a-z0-9A-Z_-]+):?([a-z0-9A-Z_\/]*):?([a-z0-9A-z]*)$/' , $argv,$commands)) {
                 $this->command[strtolower($commands[1])] = isset($commands[2]) ? strtolower(ltrim($commands[2],':')): '';
                 $this->method = isset($commands[3]) ? $commands[3] : "";
                 continue;
@@ -112,9 +112,7 @@ class KsfCLI
        $param = $command[$func];
        
        $class = self::classRemap($func);
-      
        $obj = new $class($param,$this->parameters,$this->method);
-
        if(method_exists($obj,'_execute')) {
            $obj->_execute();
        }
@@ -154,7 +152,18 @@ class KSF_CONSOLE_HELP
         }
     }
     public function _help() {
-        print_r("There is no help info !\n");
+        $help_info = <<<EOF
+Type "--help" for basic help info;
+
+commands:
+      init       do a action to deploy all directories and files            
+      script     do a script running 
+      db         do a db command to manage tables
+
+Type "<command> --help" for command help info;
+
+EOF;
+    print_r($help_info."\n");
     }
 
 }
@@ -172,7 +181,18 @@ class KSF_CONSOLE_SCRIPT
         $this->method = isset($args[2]) ? $args[2] : "";
     }
     public function _help() {
-        echo "this is script help ! \n";
+        $help_info = <<<EOF
+type 
+     script:<script path>:<mehtod> param=1 .....  
+     
+     to load a script and run the method typed in. 
+     if method is null , 'run' will be the default method.
+
+     the params will pass into the class as Array().
+     
+
+EOF;
+        print_r($help_info."\n");
     }
 
     public function _execute() {
@@ -184,6 +204,8 @@ class KSF_CONSOLE_SCRIPT
             require CONSOLE_PATH.$this->script.".php";
             if(strstr($this->script,'/')) {
                 $scripts = explode('/',$this->script);
+            }else{
+                $scripts = array($this->script);
             }
 
             $app->Bootstrap()->execute(array_pop($scripts),$this->method,$this->params);
@@ -230,7 +252,24 @@ class KSF_CONSOLE_INIT
 
     public function __construct()
     {
+    }
 
+
+    public function _help()
+    {
+        $help_info = <<<EOF
+
+type "init" 
+
+   choose the configs
+
+   Then the program will make the basic directories and files and help you building an App
+
+EOF;
+    print_r($help_info."\n");
+    }
+    public function _execute()
+    {
         $this->_init();
         
         if($this->config['makeDir']) {
@@ -243,8 +282,6 @@ class KSF_CONSOLE_INIT
         if($this->config['doComposer']) {
             $this->_doComposer();
         }
-        
-        
     }
 
     private function _init() {
@@ -301,14 +338,100 @@ class KSF_CONSOLE_INIT
 
     private function _doComposer() {
         copy(SYS_PATH."components/composer/composer.phar",ROOT_PATH."composer.phar");
-        exec("php ".ROOT_PATH."composer.phar update");
+        exec("php ".ROOT_PATH."composer.phar install");
     }
 
 
     private function _initFileContent() {
+
+                 self::$fileMap['application/Bootstrap.php'] = <<<EOF
+<?php
+/**
+ *
+ * 启动类
+ * 将在Ksf->bootstrap()时被调用
+ * 类内注册的所有 _initXxxx方法将被调用
+ */
+
+
+
+class Bootstrap
+{
+
+    public function _initRouter()
+    {
+        \$Ksf = Ksf::getInstance();
+        \$KsfConfig = KsfConfig::getInstance();
+
+        \$dispatcher = Ksf::getDispatcher();
+
+        \$router = new KsfRouter(\$dispatcher);
+
+        \$router->module = \$router->module ?  \$router->module : \$KsfConfig->get("defaultModule");
+        \$router->controller = \$router->controller ? \$router->controller : \$KsfConfig->get("defaultController");
+        \$router->action = \$router->action ? \$router->action : \$KsfConfig->get("defaultAction");
+        \$Ksf->set('router',\$router);
+    }
+
+
+    public function _initSmarty()
+    {
+        \$Ksf = Ksf::getInstance();
+        \$smarty_config = KsfConfig::getInstance()->get("smarty");
+
+        \$smarty = new Smarty();
+        \$smarty->setLeftDelimiter(\$smarty_config["left_delimiter"]);
+        \$smarty->setRightDelimiter(\$smarty_config['right_delimiter']);
+        \$smarty->setTemplateDir(\$smarty_config["template_dir"]);
+        \$smarty->setCompileDir(\$smarty_config["compiles_root"]);
+        \$smarty->setCacheDir(\$smarty_config["cache_root"]);
+
+
+        //自定义template_dir
+        \$router = \$Ksf->router;;
+
+        if(is_dir(APP_PATH."modules/".strtolower(\$router->module)."/views/"))
+            \$smarty->setTemplateDir(APP_PATH."modules/".strtolower(\$router->module)."/views/");
+
+
+        \$Ksf->set('render',\$smarty);
+    }
+    
+    public function _initServers()
+    {
+        \$Ksf = Ksf::getInstance();
+        \$servers = KsfConfig::getInstance()->get('servers');
+        foreach(\$servers as \$server_name => \$server)
+        {
+            if(!\$server['init'])
+                continue;
+
+            \$server_type = 'server_'.\$server['type'];
+            try{
+                if(class_exists(\$server_type))
+                {
+                    \$server_obj = new \$server_type(\$server);
+                    \$Ksf->set(\$server_name, \$server_obj);
+                }else{ 
+                    throw new KsfException('can not make server '.\$server_name);
+                }
+            }catch( KsfException \$e){
+                print_r(\$e->getMessage());
+            }
+        }
+
+    }
+
+
+}
+EOF;
          self::$fileMap["application/model/Sample/Sample/Sample.php"] = <<<EOF
 <?php
-
+/**
+ *  model类
+ *  当前样例 会按照 appcation/model/Sample/Sample/Sample.php 加载
+ *  请确保文件路径及类文件命名正确
+ */
 class Sample_Sample_SampleModel
 {
 
@@ -319,6 +442,12 @@ EOF;
 
          self::$fileMap["application/modules/Index/controllers/Error.php"] = <<<EOF
 <?php
+/**
+ * 错误接收控制器 
+ * 所有类内抛出的错误
+ * 都将由modules下controller里的
+ * ErrorController ErrorAction 接收
+ */
 
 class ErrorController extends KsfController
 {
@@ -326,8 +455,8 @@ class ErrorController extends KsfController
     public function ErrorAction()
     {
         // do something to show errors
-            $e = $this->getError();
-            echo $e->getMessage();
+            \$e = \$this->getError();
+            echo \$e->getMessage();
     }
 
 
@@ -337,6 +466,10 @@ class ErrorController extends KsfController
 EOF;
         self::$fileMap["application/modules/Index/controllers/Index.php"] = <<<EOF
 <?php
+/**
+ * 默认控制器
+ * 如果存在init方法 则init方法会最先执行
+ */
 
 class IndexController extends KsfController
 {
@@ -350,8 +483,8 @@ class IndexController extends KsfController
 
     public function testAction()
     {
-          $view = $this->getView();
-          $view->display('test.html');
+          \$view = \$this->getView();
+          \$view->display('test.html');
 
     }
 }
@@ -377,7 +510,7 @@ EOF;
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to Ksf!</title>
+    <title>Welcome to use Ksf!</title>
 </head>
 <body>
 <h1>Hello Ksf!</h1>
@@ -391,7 +524,7 @@ EOF;
  *
  * app配置文件
  * array(
- *     "appName"           => "kasiss",             应用名称
+ *     "appName"           => "appname",            应用名称
  *     "appLibraryPath"    => APP_PATH."lirary",    类库地址
  *     "appCachePath"      => APP_PATH."cache",     缓存地址
  *     "appDebug"          => true,                 调试模式
@@ -408,7 +541,7 @@ EOF;
  */
 
 return array(
-    "appName"           => "kasiss",
+    "appName"           => "Ksf",
     "appLibraryPath"    => APP_PATH."lirary",
     "appCachePath"      => APP_PATH."cache",
 
@@ -496,7 +629,12 @@ return array(
 EOF;
         self::$fileMap["console/console.php"] = <<<EOF
 <?php
-
+/**
+ * 命令行下的php脚本
+ * 如果存在init方法 则init方法会最先执行
+ * 如果在执行时未指定执行的方法 若存在run方法 则默认执行run()
+ * 命令行下传入的参数会以数组的形式传递到执行方法内
+ */
 class console extends KsfConsole
 {
     public function init()
@@ -505,28 +643,34 @@ class console extends KsfConsole
     }
     public function error()
     {
-        $error = Ksf::getInstance()->error;
-        print_r($error);
+        \$error = Ksf::getInstance()->error;
+        print_r(\$error);
     }
-    public function run()
+    public function run(\$param=array())
     {
-        var_dump(new Sample_Sample_SampleModel());
+        print_r(new Sample_Sample_SampleModel());
     }
 }
 EOF;
         self::$fileMap["public/index.php"] = <<<EOF
 <?php
-
+/**
+ * 入口文件 定义基本路径常量 
+ * 载入bootstrap文件 
+ * 执行Ksf run方法处理web请求
+ */
 !defined("ROOT_PATH") && define("ROOT_PATH",__DIR__."/../");
 !defined("SYS_PATH") && define("SYS_PATH",ROOT_PATH."system/");
 !defined("APP_PATH") && define("APP_PATH",ROOT_PATH."application/");
 
 require_once SYS_PATH."Bootstrap.php";
 
-$app = new Ksf(new KsfDispatcher());
+\$app = new Ksf(new KsfDispatcher());
 
-$app->Bootstrap()->run();        
+\$app->Bootstrap()->run();        
+
 EOF;
+
         self::$fileMap["composer.json"] = <<<EOF
 {
 	"description": "The Kasiss framework",
@@ -553,6 +697,14 @@ class KSF_CONSOLE_DB
     public function __construct()
     {
         # code...
+    }
+
+    public function _help()
+    {
+        $help_info = <<<EOF
+Waiting for complete!
+EOF;
+        print_r($help_info."\n");
     }
 }
 

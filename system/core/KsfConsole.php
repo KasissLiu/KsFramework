@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: kasiss
  * Date: 6/12/16
  * Time: 23:05
@@ -23,8 +22,6 @@ class KsfConsole
         if(method_exists($this,"init"))
             $this->init();
 
-        if(method_exists($this,"run"))
-            $this->run();
     }
 
     public function setMemory($size)

@@ -343,7 +343,20 @@ EOF;
 
 
     private function _initFileContent() {
+                self::$fileMap["public/index.php"] = <<<EOF
+<?php
+/**
+ * 这是测试类 样例 请于项目中删除
+ */
 
+
+ class Example {
+
+     public function __toString(){
+         return "this is a class to test autoload library!";
+     }
+ }
+EOF;
                  self::$fileMap['application/Bootstrap.php'] = <<<EOF
 <?php
 /**
@@ -648,7 +661,7 @@ class console extends KsfConsole
     }
     public function run(\$param=array())
     {
-        print_r(new Sample_Sample_SampleModel());
+        print_r(new Example());
     }
 }
 EOF;

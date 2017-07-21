@@ -4,7 +4,7 @@
  * 载入bootstrap文件 
  * 执行Ksf run方法处理web请求
  */
-!defined("ROOT_PATH") && define("ROOT_PATH",__DIR__."/../");
+!defined("ROOT_PATH") && define("ROOT_PATH",realpath(__DIR__."/../").'/');
 !defined("SYS_PATH") && define("SYS_PATH",ROOT_PATH."system/");
 !defined("APP_PATH") && define("APP_PATH",ROOT_PATH."application/");
 

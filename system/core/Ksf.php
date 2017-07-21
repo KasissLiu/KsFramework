@@ -45,32 +45,33 @@ class Ksf
      */
     public function Bootstrap()
     {
-
-        if(file_exists(APP_PATH.'Bootstrap.php'))
-        {
-            require_once APP_PATH.'Bootstrap.php';
-
-            $bootstrap = new Bootstrap();
-            $methods = get_class_methods($bootstrap);
-            foreach($methods as $method)
+        try {
+            if(file_exists(APP_PATH.'Bootstrap.php'))
             {
-                if(preg_match('/^_init[A-Z]+[a-z]+/',$method))
-                    $bootstrap->$method();
+                require_once APP_PATH.'Bootstrap.php';
+
+                $bootstrap = new Bootstrap();
+                $methods = get_class_methods($bootstrap);
+                foreach($methods as $method)
+                {
+                    if(preg_match('/^_init[A-Z]+[a-z]+/',$method)) 
+                        $bootstrap->$method();
+                }
             }
-        }
 
-        $ksfConfig = KsfConfig::getInstance();
+            $ksfConfig = KsfConfig::getInstance();
 
-        if(php_sapi_name() !== 'cli') {
-            $this->app_name = !$this->app_name ? 'KsFramework' : $this->app_name;
-            $this->router = !$this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
-            $this->input = !$this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
-            //        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
-        }
-//         $this->exception = new KsfException();
-
-
-        return $this;
+            if(php_sapi_name() !== 'cli') {
+                $this->app_name = !$this->app_name ? 'KsFramework' : $this->app_name;
+                $this->router = !$this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
+                $this->input = !$this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
+                //        $this->render = !$this->render ? new KsfRender() : $this->render;  //系统render 未完成
+            }
+    //         $this->exception = new KsfException();
+            return $this;
+        } catch ( KsfException $e ) {
+            die( $e->getMessage() );   
+        } 
     }
 
     /**
@@ -100,14 +101,12 @@ class Ksf
     public function run()
     {
         try {
-        $this->preLoad();
+            $this->preLoad();
 
-        $actController = $this->actController;
-        $actAction = $this->actAction;
+            $actController = $this->actController;
+            $actAction = $this->actAction;
 
-
-        $run = new $actController();
-
+            $run = new $actController();
             $run->$actAction();
             
         }catch( KsfException $e)
@@ -116,7 +115,7 @@ class Ksf
             $this->error->transToError($this->router);
         }catch(Exception $e)
         {
-            echo "Please Use KsfException !";
+            throw new KsfException($e->getMessage(),$e->getCode(),$e);
         }
     }
 

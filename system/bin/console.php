@@ -430,6 +430,7 @@ class Bootstrap
                 }
             }catch( KsfException \$e){
                 print_r(\$e->getMessage());
+                die();
             }
         }
 
@@ -531,115 +532,57 @@ EOF;
 </body>
 </html>
 EOF;
-        self::$fileMap["conf/appConfig.php"] = <<<EOF
-<?php
-/**
- *
- * app配置文件
- * array(
- *     "appName"           => "appname",            应用名称
- *     "appLibraryPath"    => APP_PATH."lirary",    类库地址
- *     "appCachePath"      => APP_PATH."cache",     缓存地址
- *     "appDebug"          => true,                 调试模式
- *     "autoloadLibrary"   => array(),              自动加载的类文件
- *     "appModules"        => array(),              应用可用模块
- *     "appRouterModule"   => 1                     应用路由模式
- * )
- *
- * 路由模式
- *      default: 1  sample kasiss.cn/index/index/index?id=1
- *      original: 2 sample kasiss.cn/?r=index/index/index&id=1
- *      rewrite: 3 sample kasiss.cn/index/index/index/id/1
- *
- */
+        self::$fileMap[".env"] = <<<EOF
+[app]
+;应用名称
+appName           = Ksf
+;自定义类库路径
+appLibraryPath    = APP_PATH/library
+;应用缓存路径
+appCachePath      = APP_PATH/cache
+;应用调试模式
+appDebug          = true
+;应用路由模式
+appRouterModule   = 2
 
-return array(
-    "appName"           => "Ksf",
-    "appLibraryPath"    => APP_PATH."lirary",
-    "appCachePath"      => APP_PATH."cache",
+defaultModule     = index
+defaultController = index
+defaultAction     = test
 
-    "appDebug"          => true,
-    "autoloadLibrary"   => array(),
-    "appModules"        => array(),
-    "appRouterModule"   => 2,
-
-    "defaultModule"     => "index",
-    "defaultController" => "index",
-    "defaultAction"     => "test",
-
-    //smarty config
-    "smarty" => array(
-        "left_delimiter"=>"{%",
-        "right_delimiter"=>"%}",
-        "template_dir" => APP_PATH."views/",
-        "compiles_root" => APP_PATH."cache/smarty/compiles",
-        "cache_root" => APP_PATH."cache/smarty/cache"
-    )
+[smarty]
+left_delimiter    = "{%"
+right_delimiter   = "%}"
+template_dir      = APP_PATH/views/
+compiles_root     = APP_PATH/cache/smarty/compiles
+cache_root        = APP_PATH/cache/smarty/cache
 
 
+[env]
+configPath        = ROOT_PATH/conf
 
+[server1]
+server        = server1
+type          = mysqli
+host          = localhost
+user          = root
+passwd        = 
+dbname        = dbname
+port          = 3306
+charset       = utf8
+init          = true
 
-);
-
+[server2]
+server        = server1
+type          = mysqli
+host          = localhost
+user          = root
+passwd        = 
+dbname        = dbname
+port          = 3306
+charset       = utf8
+init          = true
 EOF;
-        self::$fileMap["conf/serverConfig.php"] = <<<EOF
-<?php
-/**
- *
- * server 配置文件
- * 以mysql配置为例
- * array
- * (
- *  "server"=>, 名称
- *  "type"  =>, 类型
- *  "host"  =>, 地址
- *  "user"  =>, 用户名
- *  "passwd"=>, 密码
- *  "dbname"=>, 数据库名称
- *  "port"  =>, 访问端口号
- *  "charset"=>,使用字符集
- *  )
- *
- *
- */
 
-return array(
-    array(
-        "server"        => "server1",
-        "type"          => "mysql",
-        "host"          => "localhost",
-        "user"          => "root",
-        "passwd"        => "",
-        "dbname"        => "dbname",
-        "port"          => 3306,
-        "charset"       => "utf8",
-        "init"          => true,
-    ),
-    array(
-        "server"        => "server2",
-        "type"          => "mysql",
-        "host"          => "localhost",
-        "user"          => "root",
-        "passwd"        => "",
-        "dbname"        => "dbname",
-        "port"          => 3306,
-        "charset"       => "utf8",
-        "init"          => true,
-    ),
-    array(
-        "server"        => "mailer",
-        "type"          => "mail",
-        "smtp_server"   => "",
-        "smtp_port"     => 465,
-        "smtp_ssl"      => "",
-        "smtp_username" => "",
-        "smtp_password" => "",
-        "charset"       => "utf-8",
-        "init"          => false,
-    )
-);
-
-EOF;
         self::$fileMap["console/console.php"] = <<<EOF
 <?php
 /**

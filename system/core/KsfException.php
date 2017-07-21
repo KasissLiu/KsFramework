@@ -8,11 +8,18 @@
 
 class KsfException extends Exception
 {
-    public $user_error_data = null;
-    public $user_error_msg = null;
 
-    public function __construct($msg="",$data="")
+    const SYS_ERROR = 500;
+    const CONFIG_ERROR = 501;
+
+
+    protected $user_error_data = null;
+    protected $user_error_msg = null;
+
+    public function __construct($msg="",$code=0,$data="")
     {
+        !$code && $code = self::SYS_ERROR;
+        parent::__construct($msg,$code);
         $this->user_error_msg = $msg;
         $this->user_error_data = $data;
         return $this;
@@ -44,5 +51,15 @@ class KsfException extends Exception
            echo "There is no $instance Class!";
         }
         
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->user_error_msg;
+    }
+
+    public function getErrorData() 
+    {
+        return $this->user_error_data;
     }
 }

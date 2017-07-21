@@ -31,7 +31,6 @@ class Bootstrap
     {
         $Ksf = Ksf::getInstance();
         $smarty_config = KsfConfig::getInstance()->get("smarty");
-
         $smarty = new Smarty();
         $smarty->setLeftDelimiter($smarty_config["left_delimiter"]);
         $smarty->setRightDelimiter($smarty_config['right_delimiter']);
@@ -68,8 +67,9 @@ class Bootstrap
                 }else{ 
                     throw new KsfException('can not make server '.$server_name);
                 }
-            }catch( KsfException $e){
+            }catch( KsfException $e ){
                 print_r($e->getMessage());
+                die();
             }
         }
 

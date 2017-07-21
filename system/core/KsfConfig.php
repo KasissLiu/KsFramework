@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kasiss
@@ -9,23 +10,20 @@
  * 主要用于储存用户设置的配置内容
  * 便于其他类调用
  */
-
-
 class KsfConfig
 {
-    private $appName = "";                      //应用名称
-    private $appLibraryPath = "";               //应用类库
-    private $appCachePath = "";                 //应用缓存地址
-    private $appDebug = false;                  //应用调试模式
+    private $env = array();                                         //环境文件解析
+    private $configPath = "";                                       //配置文件目录
+    private $appName = "";                                          //应用名称
+    private $appLibraryPath = "";                                   //应用类库
+    private $appCachePath = "";                                     //应用缓存地址
+    private $appDebug = false;                                      //应用调试模式
 
-    private $autoloadLibrary = array();         //应用需要自动加载的类文件
-    private $appModules = array();              //应用可用模块
+    private $appRouterModule = KsfRouter::DEFAULT_MODE;             //应用路由模式
 
-    private $appRouterModule = 1;               //应用路由模式
+    private $servers = array();                                     //应用所使用的链接配置
 
-    private $servers = array();                 //应用所使用的链接配置
-
-    private static $_instance;                  //存储单例
+    private static $_instance;                                      //存储单例
 
     /**
      * KsfConfig constructor.
@@ -34,10 +32,20 @@ class KsfConfig
      */
     public function __construct()
     {
+        $this->_initEnv();
         $this->_initAppConfig();
         $this->_initServerConfig();
-
+        $this->_initCustomConfig();
     }
+
+    /**
+     * 加载环境配置 .env
+     */
+    private function _initEnv()
+    {
+        $this->env = KsfLoader::$env;
+    }
+
 
     /**
      * 加载app配置文件
@@ -46,17 +54,12 @@ class KsfConfig
      */
     private function _initAppConfig()
     {
-        if(file_exists(ROOT_PATH."conf/appConfig.php"))
-            $app_config = require_once(ROOT_PATH."conf/appConfig.php");
-        else
-            throw  new Exception("appConfig File Not Found!");
-
-        if(is_array($app_config))
-        {
-            foreach($app_config as $prop => $value)
-            {
-                $this->set($prop,$value);
-            }
+        if (!isset($this->env['app'])) {
+            throw new KsfException('APP CONFIGURE IS MISSING !');
+        }
+        $app_config = $this->env['app'];
+        foreach ($app_config as $key => $value) {
+            $this->set($key, $value);
         }
     }
 
@@ -67,20 +70,23 @@ class KsfConfig
      */
     private function _initServerConfig()
     {
-        if(file_exists(ROOT_PATH."conf/serverConfig.php"))
-            $server_config = require_once(ROOT_PATH."conf/serverConfig.php");
-        else
-            throw  new Exception("dbConfig File Not Found!");
-
-        if(is_array($server_config))
-        {
-            foreach($server_config as $value)
-            {
-                $server = array();
-                $server = $value;
-                unset($server['server']);
-                $this->servers[$value['server']] = $server;
+        foreach ($this->env as $key => $value) {
+            if (strstr($key, 'server')) {
+                $this->servers[$key] = $value;
             }
+        }
+    }
+
+    /**
+     * 加载自定义配置
+     */
+    private function _initCustomConfig()
+    {
+        foreach ($this->env as $key => $value) {
+            if ($key == 'app' || strstr($key, 'server')) {
+                continue;
+            }
+            $this->set($key, $value);
         }
     }
 
@@ -90,7 +96,7 @@ class KsfConfig
      * @param $prop
      * @param $value
      */
-    public function set($prop,$value)
+    public function set($prop, $value)
     {
         $this->$prop = $value;
     }
@@ -123,43 +129,41 @@ class KsfConfig
      */
     public static function getInstance()
     {
-        if(!(self::$_instance instanceof self))
+        if (!(self::$_instance instanceof self))
             self::$_instance = new self;
         return self::$_instance;
     }
+
     /**
      *
      * 自定义载入配置文件
      */
-    public static function import($config_file,$prop_name=null)
+    public static function import($config_file, $prop_name = null)
     {
         $instance = self::getInstance();
-        
-        if(file_exists(ROOT_PATH."conf/".$config_file))
-            $user_config = require_once(ROOT_PATH."conf/".$config_file);
+
+        if (file_exists(CONFIG_PATH . $config_file))
+            $user_config = require_once(CONFING_PATH . $config_file);
         else
-            throw  new Exception("Config File Not Found!");
-    
-        if(is_array($user_config))
-        {
-            foreach($user_config as $prop => $value)
-            {
-                if($prop_name)
-                {
-                    if($prop_name == $prop)
-                    {
-                        $instance->set($prop,$value);
+            throw  new KsfException("Config File Not Found!");
+
+        if (is_array($user_config)) {
+            foreach ($user_config as $prop => $value) {
+                if ($prop_name) {
+                    if ($prop_name == $prop) {
+                        $instance->set($prop, $value);
                         break;
                     }
-                }else{
+                } else {
                     $instance->set($prop, $value);
                 }
             }
         }
-        
+
         return $prop_name ? $instance->get($prop_name) : true;
-        
+
     }
+
     /**
      * 禁止克隆
      */

@@ -1,4 +1,7 @@
 composer.lock
 composer.phar
 vendor
-
+.idea
+.settings
+.buildpath
+.project

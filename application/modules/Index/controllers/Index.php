@@ -18,6 +18,6 @@ class IndexController extends KsfController
     {
           $view = $this->getView();
           $view->display('test.html');
-
+          
     }
 }

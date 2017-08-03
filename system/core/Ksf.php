@@ -107,7 +107,11 @@ class Ksf
             $actAction = $this->actAction;
 
             $run = new $actController();
-            $run->$actAction();
+            if(method_exists($run,$actAction)) {
+                $run->$actAction();
+            }else{
+                throw new KsfException("There is no {$actAction} !");
+            }
             
         }catch( KsfException $e)
         {
@@ -153,7 +157,7 @@ class Ksf
             if(!method_exists($exec_obj,$method)) {
                     throw new KsfException('No Method {'.$method.'} Found!');
             }
-                    $exec_obj->$method($param);
+            $exec_obj->$method($param);
         }catch( KsfException $e)
         {
             $this->error = $e;

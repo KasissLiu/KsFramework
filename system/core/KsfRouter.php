@@ -3,6 +3,7 @@
  * User: kasiss
  * Date: 5/24/16
  * Time: 23:49
+ * 处理路由参数 解析请求参数
  */
 
 
@@ -20,16 +21,15 @@ class KsfRouter
     const ORIGINAL_MODE = 2;
     const REWRITE_MODE = 3;
 
-    public function __construct(KsfDispatcher $dispatcher,$uri_mode=1)
+    public function __construct(KsfDispatcher $dispatcher,$uri_mode)
     {
         $scripts = $this->getRouter($dispatcher,$uri_mode);
         $this->querys = $this->getQuerys();
+        
+        $this->module = isset($scripts[0]) ? $scripts[0] : "";//KsfConfig::getInstance()->get('defaultModule');
+        $this->controller = isset($scripts[1]) ? $scripts[1] : "";//KsfConfig::getInstance()->get('defaultController');
+        $this->action = isset($scripts[2]) ? $scripts[2] : "";//KsfConfig::getInstance()->get('defaultAction');
 
-
-
-        $this->module = isset($scripts[0]) ? $scripts[0] : KsfConfig::getInstance()->get('defaultModule');
-        $this->controller = isset($scripts[1]) ? $scripts[1] : KsfConfig::getInstance()->get('defaultController');
-        $this->action = isset($scripts[2]) ? $scripts[2] : KsfConfig::getInstance()->get('defaultAction');
 
         return $this;
     }
@@ -62,6 +62,7 @@ class KsfRouter
 
     private function default_mode(KsfDispatcher $dispatcher)
     {
+        
         $path = trim($dispatcher->path,'/');
         $this->querys = $dispatcher->query;
         $scripts = explode('/',$path);
@@ -71,6 +72,7 @@ class KsfRouter
 
     private function original_mode(KsfDispatcher $dispatcher)
     {
+        
         $query = trim($dispatcher->query,'/');
 
         $querys = explode('&',$query);
@@ -81,7 +83,7 @@ class KsfRouter
             if($route[0] == 'r')
             {
                 $this->querys = $querys;
-                $scripts = isset($route[1]) ? explode('/',$route[1]) : array();
+                $scripts = isset($route[1]) ? explode('/',trim($route[1],'/')) : array();
 
             }else{
                 $scripts = array();

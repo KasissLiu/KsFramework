@@ -44,6 +44,6 @@ class KsfDispatcher
     public function setRender($render)
     {
         $this->render = $render;
-        return 1;
+        return true;
     }
 }

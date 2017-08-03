@@ -16,8 +16,11 @@ class IndexController extends KsfController
 
     public function testAction()
     {
-          $view = $this->getView();
-          $view->display('test.html');
+        echo '<pre>';
+        $ksf = Ksf::getInstance();
+          var_dump($ksf->router);
+          var_dump($ksf->input->get);
+          var_dump($_GET);
           
     }
 }

@@ -1,6 +1,6 @@
 {
-	"description": "The Kasiss framework",
-	"name": "KsFramework",
+	"description": "The Kasiss Framework",
+	"name": "kasiss/ksf",
 	"type": "project",
 	"homepage": "http://kasiss.cn",
 	"require": {

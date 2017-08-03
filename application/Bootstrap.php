@@ -18,7 +18,7 @@ class Bootstrap
 
         $dispatcher = Ksf::getDispatcher();
 
-        $router = new KsfRouter($dispatcher);
+        $router = new KsfRouter($dispatcher,$KsfConfig->get('appRouterModule'));
 
         $router->module = $router->module ?  $router->module : $KsfConfig->get("defaultModule");
         $router->controller = $router->controller ? $router->controller : $KsfConfig->get("defaultController");
@@ -40,11 +40,10 @@ class Bootstrap
 
 
         //自定义template_dir
-        $router = $Ksf->router;;
+        $router = $Ksf->router;
 
         if(is_dir(APP_PATH."modules/".strtolower($router->module)."/views/"))
             $smarty->setTemplateDir(APP_PATH."modules/".strtolower($router->module)."/views/");
-
 
         $Ksf->set('render',$smarty);
     }

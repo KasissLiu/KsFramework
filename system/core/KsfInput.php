@@ -83,6 +83,11 @@ class KsfInput
             unset($this->get[$path]);
     }
 
+    public function __get($attr) 
+    {
+        return isset($this->$attr) ? $this->$attr : array();
+    }
+
 
 
 }

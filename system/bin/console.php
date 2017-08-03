@@ -378,7 +378,7 @@ class Bootstrap
 
         \$dispatcher = Ksf::getDispatcher();
 
-        \$router = new KsfRouter(\$dispatcher);
+        \$router = new KsfRouter(\$dispatcher,\$KsfConfig->get('appRouterModule'));
 
         \$router->module = \$router->module ?  \$router->module : \$KsfConfig->get("defaultModule");
         \$router->controller = \$router->controller ? \$router->controller : \$KsfConfig->get("defaultController");

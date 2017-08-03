@@ -17,6 +17,7 @@ class IndexController extends KsfController
     public function testAction()
     {  
         //do something
-        echo "This is test Controller";     
+        $view = $this->getView();
+        $view->display('test.html');
     }
 }

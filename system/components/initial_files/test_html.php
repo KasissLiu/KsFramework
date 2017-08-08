@@ -1,3 +1,5 @@
+<?php
+$content = <<<EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +10,8 @@
 
 <h1>This is a testing page!</h1>
 
-
 </body>
 </html>
+EOF;
+
+return $content;

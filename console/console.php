@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 命令行下的php脚本
  * 如果存在init方法 则init方法会最先执行
@@ -7,16 +8,17 @@
  */
 class console extends KsfConsole
 {
-    public function init()
-    {
 
-    }
+    public function init()
+    {}
+
     public function error()
     {
         $error = Ksf::getInstance()->error;
         print_r($error);
     }
-    public function run($param=array())
+
+    public function run($param = array())
     {
         echo new Example();
     }

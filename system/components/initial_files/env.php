@@ -1,6 +1,4 @@
 <?php
-
-
 $content = <<<EOF
 [app]
 ;应用名称

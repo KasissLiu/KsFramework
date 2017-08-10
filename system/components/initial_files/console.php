@@ -1,5 +1,4 @@
 <?php
-
 $content = <<<EOF
 <?php
 /**
@@ -25,6 +24,5 @@ class console extends KsfConsole
     }
 }
 EOF;
-
 
 return $content;

@@ -12,6 +12,7 @@ class KsfLoader
     public static $instance;
 
     public static $module;
+
     public static $controller;
 
     public static $env;
@@ -23,11 +24,11 @@ class KsfLoader
      */
     public function __construct()
     {
-        !defined("APP_PATH") && define("APP_PATH", '../../application/');
-        !defined("SYS_PATH") && define("SYS_PATH", '../../system/');
-        !defined("SYS_CORE") && define("SYS_CORE", SYS_PATH . 'core/');
-        !defined("SYS_LIBRARY") && define("SYS_LIBRARY", SYS_PATH . 'library/');
-
+        ! defined("APP_PATH") && define("APP_PATH", '../../application/');
+        ! defined("SYS_PATH") && define("SYS_PATH", '../../system/');
+        ! defined("SYS_CORE") && define("SYS_CORE", SYS_PATH . 'core/');
+        ! defined("SYS_LIBRARY") && define("SYS_LIBRARY", SYS_PATH . 'library/');
+        
         if (file_exists(ROOT_PATH . '.env')) {
             $env = parse_ini_file(ROOT_PATH . '.env', true);
             foreach ($env as $key => $value) {
@@ -42,33 +43,41 @@ class KsfLoader
         } else {
             die('.env CONFIGURE FILE IS MISSING!');
         }
-
+        
         if (isset($env['app']['appLibraryPath'])) {
-            !defined("APP_LIBRARY") && define("APP_LIBRARY", $env['app']['appLibraryPath']);
+            ! defined("APP_LIBRARY") && define("APP_LIBRARY", $env['app']['appLibraryPath']);
         } else {
-            !defined("APP_LIBRARY") && define("APP_LIBRARY", APP_PATH . 'library');
+            ! defined("APP_LIBRARY") && define("APP_LIBRARY", APP_PATH . 'library');
         }
-
+        
         if (isset($env['env']['configPath'])) {
-            !defined('CONFIG_PATH') && define('CONFIG_PATH', rtrim($env['env']['configPath'], '/') . '/');
+            ! defined('CONFIG_PATH') && define('CONFIG_PATH', rtrim($env['env']['configPath'], '/') . '/');
         } else {
-            !defined('CONFIG_PATH') && define('CONFIG_PATH', APP_PATH.'conf');
+            ! defined('CONFIG_PATH') && define('CONFIG_PATH', APP_PATH . 'conf');
         }
-
+        
         self::$env = $env;
-
+        
         $this->composer_autoload();
-
-        spl_autoload_register(array("KsfLoader", "sysAutoLoader"));
-        spl_autoload_register(array("KsfLoader", "appAutoLoader"));
-        spl_autoload_register(array("ksfLoader", "modelAutoLoader"));
-
+        
+        spl_autoload_register(array(
+            "KsfLoader",
+            "sysAutoLoader"
+        ));
+        spl_autoload_register(array(
+            "KsfLoader",
+            "appAutoLoader"
+        ));
+        spl_autoload_register(array(
+            "ksfLoader",
+            "modelAutoLoader"
+        ));
     }
 
     /**
-     * @param $value
-     * @return mixed
-     * 替换.env中的常量
+     *
+     * @param string $value            
+     * @return mixed 替换.env中的常量
      */
     private function constReplace($value)
     {
@@ -96,7 +105,9 @@ class KsfLoader
 
     /**
      * 文件加载函数
-     * @param $file
+     *
+     * @param
+     *            $file
      * @return bool
      */
     public static function import($file)
@@ -105,43 +116,49 @@ class KsfLoader
             include_once $file;
             return true;
         } else {
-            throw  new Exception("Loader: {$file}  is not exist");
+            throw new Exception("Loader: {$file}  is not exist");
         }
     }
 
     /**
      * 系统类 自动加载函数
-     * @param $class
+     *
+     * @param
+     *            $class
      * @throws Exception
      */
     public static function sysAutoLoader($class)
     {
         if (file_exists(SYS_CORE . $class . '.php')) {
-            include_once(SYS_CORE . $class . '.php');
+            include_once (SYS_CORE . $class . '.php');
             return true;
         }
     }
 
     /**
      * 应用资源库 自动加载函数
-     * @param $class
+     *
+     * @param
+     *            $class
      */
     public static function appAutoLoader($class)
     {
         $class = strpos($class, '_') > 0 ? str_replace('_', '/', $class) : $class;
         if (file_exists(APP_LIBRARY . $class . '.php')) {
-            include_once(APP_LIBRARY . $class . '.php');
+            include_once (APP_LIBRARY . $class . '.php');
             return true;
         }
         if (file_exists(SYS_LIBRARY . $class . '.php')) {
-            include_once(SYS_LIBRARY . $class . '.php');
+            include_once (SYS_LIBRARY . $class . '.php');
             return true;
         }
     }
 
     /**
      * 模型类 自动加载函数
-     * @param $class
+     *
+     * @param
+     *            $class
      */
     public static function modelAutoLoader($class)
     {
@@ -157,18 +174,17 @@ class KsfLoader
             $filename = $path;
         }
         if (file_exists(APP_PATH . 'model/' . $filename . '.php')) {
-            include_once(APP_PATH . 'model/' . $filename . '.php');
+            include_once (APP_PATH . 'model/' . $filename . '.php');
         }
     }
 
     public static function getInstance()
     {
         if (empty(self::$instance)) {
-            self::$instance = new self;
+            self::$instance = new self();
         }
         return self::$instance;
     }
-
 }
 
 return KsfLoader::getInstance();

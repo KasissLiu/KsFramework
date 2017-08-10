@@ -1,5 +1,4 @@
 <?php
-
 $content = <<<EOF
 {
 	"description": "The Kasiss framework",

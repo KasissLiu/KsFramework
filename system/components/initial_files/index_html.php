@@ -1,5 +1,4 @@
 <?php
-
 $content = <<<EOF
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +12,5 @@ $content = <<<EOF
 </body>
 </html>
 EOF;
-
 
 return $content;

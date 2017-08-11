@@ -66,7 +66,7 @@ class Bootstrap
             if (! $server['init'])
                 continue;
             
-            $server_type = 'server_1' . $server['type'];
+            $server_type = 'server_' . $server['type'];
             if (class_exists($server_type)) {
                 $server_obj = new $server_type($server);
                 $Ksf->set($server_name, $server_obj);
@@ -83,9 +83,9 @@ class Bootstrap
     public function _initErrorHandle()
     {
         $Ksf = Ksf::getInstance();
-//         $Ksf->set('errorHandle',function($e){ 
-//             //do something to record errors
-//         });
+        $Ksf->set('errorHandle',function($e){ 
+            //do something to record errors
+        });
         
     }
 }

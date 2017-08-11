@@ -1,7 +1,7 @@
 {
   "name" : "kasiss/ksf",
   "description" : "The Kasiss Framework",
-  "version" : "1.0.0",
+  "version" : "1.0.1",
   "require" : {
     "php" : ">=5.3",
     "smarty/smarty" : "3.1.27"

@@ -110,7 +110,8 @@ class KsfCLI
         if (count($this->command) > 1) {
             throw new Exception("ONLY ONE COMMAND CAN BE EXECUTED!");
         }
-        $command = array_shift(array_keys($this->command));
+        $command = array_keys($this->command);
+        $command = array_shift($command);
         if (! in_array($command, array_keys(self::$commands))) {
             throw new Exception("NO LEGAL COMMAND FOUND !");
         }
@@ -193,7 +194,7 @@ class KSF_CONSOLE_SCRIPT
     public function __construct()
     {
         $args = func_get_args();
-        $this->script = $args[0];
+        $this->script = isset($args[0]) ? $args[0] : "";
         $this->params = isset($args[1]) ? $args[1] : array();
         $this->method = isset($args[2]) ? $args[2] : "";
     }
@@ -406,6 +407,7 @@ class KSF_SERVER
     public function _execute()
     {
         if (file_exists(ROOT_PATH . 'public')) {
+            print_r("\033[32m kasiss development server started: \e[m <http://127.0.0.1:8888>\n");
             exec("php -S 0.0.0.0:8888 -t " . ROOT_PATH . "public", $op);
         } else {
             throw new Exception('Path ./public not exists! Please try \'./system/bin/console init\' first! ');

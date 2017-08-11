@@ -45,7 +45,7 @@ class KsfLoader
         }
         
         if (isset($env['app']['appLibraryPath'])) {
-            ! defined("APP_LIBRARY") && define("APP_LIBRARY", $env['app']['appLibraryPath']);
+            ! defined("APP_LIBRARY") && define("APP_LIBRARY", rtrim($env['app']['appLibraryPath'], '/') . '/');
         } else {
             ! defined("APP_LIBRARY") && define("APP_LIBRARY", APP_PATH . 'library');
         }

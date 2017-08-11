@@ -135,10 +135,9 @@ class Ksf
             include_once $filename;
         } else {
             throw new KsfException("There is no {$controller}Controller!");
-            
-            $this->actController = $controller . 'Controller';
-            $this->actAction = $action . 'Action';
         }
+        $this->actController = $controller . 'Controller';
+        $this->actAction = $action . 'Action';
     }
 
     /**
@@ -151,7 +150,7 @@ class Ksf
             
             $actController = $this->actController;
             $actAction = $this->actAction;
-            
+
             $run = new $actController();
             if (method_exists($run, $actAction)) {
                 $run->$actAction();

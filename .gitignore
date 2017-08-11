@@ -1,4 +1,9 @@
-composer.lock
 composer.phar
 vendor
-
+.idea
+.settings
+.buildpath
+.project
+.env
+application/cache/*
+application/storage/log/*

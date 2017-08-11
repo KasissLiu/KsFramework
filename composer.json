@@ -1,10 +1,11 @@
 {
-	"description": "The Kasiss framework",
-	"name": "KsFramework",
-	"type": "project",
-	"homepage": "http://kasiss.cn",
-	"require": {
-		"php": ">=5.3",
-		"smarty/smarty" : "3.1.27"
-	}
+  "name" : "kasiss/ksf",
+  "description" : "The Kasiss Framework",
+  "version" : "1.0.1",
+  "require" : {
+    "php" : ">=5.3",
+    "smarty/smarty" : "3.1.27"
+  },
+  "type" : "project",
+  "homepage" : "http://kasiss.cn"
 }

@@ -3,12 +3,12 @@
 
 执行命令 获取帮助信息
 ```
-system/bin/console --help
+php kasiss --help
 ```
 
 执行命令 初始化项目
 ```
-system/bin/console init 
+php kasiss init 
 ```
 
 默认入口文件

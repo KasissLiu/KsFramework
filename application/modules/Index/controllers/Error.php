@@ -13,6 +13,6 @@ class ErrorController extends KsfController
     {
         // do something to show errors
         $e = $this->getError();
-        echo $e->getMessage();
+        echo $e->getErrorMessage();
     }
 }

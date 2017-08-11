@@ -41,11 +41,13 @@ class KsfConfig
         $this->_initEnv();
         $this->_initAppConfig();
         $this->_initServerConfig();
+        $this-> _initConstantConfig();
         $this->_initCustomConfig();
     }
 
     /**
      * 加载环境配置 .
+     *
      *
      * env
      */
@@ -87,12 +89,27 @@ class KsfConfig
     }
 
     /**
+     * 定义配置文件中的常量
+     */
+    private function _initConstantConfig()
+    {
+        $constants = isset($this->env['constant']) ? $this->env['constant'] : array();
+        if ($constants) {
+            foreach($constants as $conName=>$conValue) {
+                $conName = strtoupper($conName);
+                !defined($conName) && define($conName,$conValue); 
+            }
+        }
+        return true;
+    }
+
+    /**
      * 加载自定义配置
      */
     private function _initCustomConfig()
     {
         foreach ($this->env as $key => $value) {
-            if ($key == 'app' || strstr($key, 'server')) {
+            if ($key == 'app' || strstr($key, 'server' || $key == 'constant')) {
                 continue;
             }
             $this->set($key, $value);

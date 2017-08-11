@@ -23,9 +23,14 @@ template_dir      = APP_PATH/views/
 compiles_root     = APP_PATH/cache/smarty/compiles
 cache_root        = APP_PATH/cache/smarty/cache
 
+[constant]
+environment 	  = develop
 
 [env]
+;配置文件路径
 configPath        = ROOT_PATH/conf
+;应用日志路径
+appLogPath		  = ROOT_PATH/storage/log
 
 [server1]
 server        = server1

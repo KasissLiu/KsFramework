@@ -397,7 +397,6 @@ class KSF_SERVER
 
     public function __construct()
     {
-        var_dump($args);
         $args = func_get_args();
         $this->script = $args[0];
         $this->params = isset($args[1]) ? $args[1] : array();
@@ -407,8 +406,7 @@ class KSF_SERVER
     public function _execute()
     {
         if (file_exists(ROOT_PATH . 'public')) {
-            exec("nohup php -S 0.0.0.0:8888 -t " . ROOT_PATH . "public > /dev/null 2>&1 & echo $!", $op);
-            var_dump($op);
+            exec("php -S 0.0.0.0:8888 -t " . ROOT_PATH . "public", $op);
         } else {
             throw new Exception('Path ./public not exists! Please try \'./system/bin/console init\' first! ');
         }

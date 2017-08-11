@@ -8,31 +8,34 @@
  */
 class Ksf
 {
-
+    // App Name
     private $app_name;
- // App Name
+    // App Router
     private $router;
- // App Router
+    // App Input
     private $input;
- // App Input
+    // App Render
     private $render;
- // App Render
+    // App Exception
     private $exception;
- // App Exception
+    // App Error Msg
     private $error;
- // App Error Msg
+    // Request Controller
     private $actController;
- // Request Controller
+    // Request Action
     private $actAction;
- // Request Action
+    // Request Dispatcher
     private $dispatcher;
- // Request Dispatcher
+    // Hook for record errors
+    private $errorHandle;
+    // Logger
+    private $logger;
+    // To Save an Instance of Ksf
     private static $_instance;
- // To Save an Instance of Ksf
-    
+
     /**
      * Ksf constructor.
-     * 
+     *
      * @param KsfDispatcher $dispatcher            
      */
     public function __construct(KsfDispatcher $dispatcher)
@@ -55,6 +58,12 @@ class Ksf
                 
                 $bootstrap = new Bootstrap();
                 $methods = get_class_methods($bootstrap);
+                
+                if (method_exists($bootstrap, '_initErrorHandle')) {
+                    $bootstrap->_initErrorHandle();
+                    unset($methods[array_search('_initErrorHandle', $methods)]);
+                }
+                
                 foreach ($methods as $method) {
                     if (preg_match('/^_init[A-Z]+[a-z]+/', $method))
                         $bootstrap->$method();
@@ -67,18 +76,29 @@ class Ksf
                 $this->app_name = ! $this->app_name ? 'KsFramework' : $this->app_name;
                 $this->router = ! $this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
                 $this->input = ! $this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
-                // $this->render = !$this->render ? new KsfRender() : $this->render; //系统render 未完成
             }
-            // $this->exception = new KsfException();
+            // set a logger if logger is not customed
+            if (! $this->logger) {
+                $this->logger = KsfLoader::getInstance();
+            }
+            
             return $this;
         } catch (KsfException $e) {
-            die($e->getMessage());
+            $this->error = $e;
+            $e->dumpError($e);
+        } catch (Exception $e) {
+            try {
+                throw new KsfException($e->getMessage(), $e->getCode(), $e);
+            } catch (KsfException $e) {
+                $this->error = $e;
+                $e->dumpError($e);
+            }
         }
     }
 
     /**
      * 向实例内添加自定义属性
-     * 
+     *
      * @param unknown $prop            
      * @param unknown $val            
      */
@@ -91,12 +111,34 @@ class Ksf
 
     /**
      * 获取实例内的属性
-     * 
+     *
      * @param unknown $prop            
      */
     public function __get($prop)
     {
         return isset($this->$prop) ? $this->$prop : null;
+    }
+
+    /**
+     * 预处理路由数据
+     *
+     * @throws KsfException
+     */
+    private function preLoad()
+    {
+        $module = ucfirst($this->router->module);
+        $controller = ucfirst($this->router->controller);
+        $action = $this->router->action;
+        
+        $filename = APP_PATH . 'modules/' . $module . '/controllers/' . $controller . '.php';
+        if (file_exists($filename)) {
+            include_once $filename;
+        } else {
+            throw new KsfException("There is no {$controller}Controller!");
+            
+            $this->actController = $controller . 'Controller';
+            $this->actAction = $action . 'Action';
+        }
     }
 
     /**
@@ -118,34 +160,32 @@ class Ksf
             }
         } catch (KsfException $e) {
             $this->error = $e;
-            $this->error->transToError($this->router);
+            $this->transToError($this->router);
         } catch (Exception $e) {
-            throw new KsfException($e->getMessage(), $e->getCode(), $e);
+            try {
+                throw new KsfException($e->getMessage(), $e->getCode(), $e);
+            } catch (KsfException $e) {
+                $this->error = $e;
+                $e->transToError($this->router);
+            }
         }
     }
 
-    private function preLoad()
-    {
-        $module = ucfirst($this->router->module);
-        $controller = ucfirst($this->router->controller);
-        $action = $this->router->action;
-        
-        $filename = APP_PATH . 'modules/' . $module . '/controllers/' . $controller . '.php';
-        if (file_exists($filename))
-            include_once $filename;
-        else
-            throw new KsfException("There is no {$controller}Controller!");
-        
-        $this->actController = $controller . 'Controller';
-        $this->actAction = $action . 'Action';
-    }
-
+    /**
+     * cli 脚本执行的入口
+     *
+     * @param unknown $object            
+     * @param unknown $method            
+     * @param unknown $param            
+     * @throws KsfException
+     */
     public function execute($object, $method = null, $param = null)
     {
         try {
             
-            if (! class_exists($object))
+            if (! class_exists($object)) {
                 throw new KsfException('No Class {' . $object . '} Found!');
+            }
             
             $exec_obj = new $object();
             
@@ -160,13 +200,18 @@ class Ksf
             $this->error = $e;
             $e->executeError($object);
         } catch (Exception $e) {
-            echo "Please Use KsfException !";
+            try {
+                throw new KsfException($e->getMessage(), $e->getCode(), $e);
+            } catch (KsfException $e) {
+                $this->error = $e;
+                $this->executeError($object);
+            }
         }
     }
 
     /**
      * 单例工厂
-     * 
+     *
      * @return Ksf
      */
     public static function getInstance()
@@ -184,7 +229,7 @@ class Ksf
 
     /**
      * 获取保存在Ksf中的dispatcher实例
-     * 
+     *
      * @return KsfDispatcher
      */
     public static function getDispatcher()
@@ -197,7 +242,6 @@ class Ksf
      */
     private function __clone()
     {
-        // TODO: Implement __clone() method.
-        trigger_error('Clone is not allow!', E_USER_ERROR);
+        return self::$_instance;
     }
 }

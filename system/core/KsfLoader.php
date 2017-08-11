@@ -56,6 +56,12 @@ class KsfLoader
             ! defined('CONFIG_PATH') && define('CONFIG_PATH', APP_PATH . 'conf');
         }
         
+        if (isset($env['env']['appLogPath'])) {
+            ! defined('LOG_PATH') && define('LOG_PATH', rtrim($env['env']['appLogPath'], '/') . '/');
+        } else {
+            ! defined('LOG_PATH') && define('LOG_PATH', APP_PATH . 'conf');
+        }
+        
         self::$env = $env;
         
         $this->composer_autoload();

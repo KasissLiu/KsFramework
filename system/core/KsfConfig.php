@@ -41,12 +41,13 @@ class KsfConfig
         $this->_initEnv();
         $this->_initAppConfig();
         $this->_initServerConfig();
-        $this-> _initConstantConfig();
+        $this->_initConstantConfig();
         $this->_initCustomConfig();
     }
 
     /**
      * 加载环境配置 .
+     *
      *
      *
      * env
@@ -95,9 +96,9 @@ class KsfConfig
     {
         $constants = isset($this->env['constant']) ? $this->env['constant'] : array();
         if ($constants) {
-            foreach($constants as $conName=>$conValue) {
+            foreach ($constants as $conName => $conValue) {
                 $conName = strtoupper($conName);
-                !defined($conName) && define($conName,$conValue); 
+                ! defined($conName) && define($conName, $conValue);
             }
         }
         return true;

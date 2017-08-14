@@ -32,7 +32,8 @@ class KsfRouter
         
         $this->module = isset($scripts[0]) ? $scripts[0] : KsfConfig::getInstance()->get('defaultModule');
         $this->controller = isset($scripts[1]) ? $scripts[1] : KsfConfig::getInstance()->get('defaultController');
-        $this->action = isset($scripts[2]) ? $scripts[2] : ""; KsfConfig::getInstance()->get('defaultAction');
+        $this->action = isset($scripts[2]) ? $scripts[2] : "";
+        KsfConfig::getInstance()->get('defaultAction');
         
         return $this;
     }

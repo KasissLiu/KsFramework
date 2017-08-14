@@ -8,21 +8,39 @@
  */
 class KsfRouter
 {
-
+    // 路由请求mudule
     private $module;
-
+    // 路由请求controller
     private $controller;
-
+    // 路由请求action
     private $action;
-
+    // 请求传递的参数
     private $params;
-
+    // 请求的query
     private $querys;
 
+    /**
+     * 默认模式
+     *
+     * @var int 1
+     *      hostname/module/controller/action?param1=1&param2=2&...
+     */
     const DEFAULT_MODE = 1;
 
+    /**
+     * 传统模式
+     *
+     * @var int 2
+     *      hostname?r=module/controller/action&param1=1&...
+     */
     const ORIGINAL_MODE = 2;
 
+    /**
+     * rewrite模式
+     *
+     * @var integer 3
+     *      hostname/module/controller/action/param1/value1/...
+     */
     const REWRITE_MODE = 3;
 
     public function __construct(KsfDispatcher $dispatcher, $uri_mode)
@@ -32,7 +50,8 @@ class KsfRouter
         
         $this->module = isset($scripts[0]) ? $scripts[0] : KsfConfig::getInstance()->get('defaultModule');
         $this->controller = isset($scripts[1]) ? $scripts[1] : KsfConfig::getInstance()->get('defaultController');
-        $this->action = isset($scripts[2]) ? $scripts[2] : ""; KsfConfig::getInstance()->get('defaultAction');
+        $this->action = isset($scripts[2]) ? $scripts[2] : "";
+        KsfConfig::getInstance()->get('defaultAction');
         
         return $this;
     }
@@ -61,6 +80,11 @@ class KsfRouter
         return $this->$prop = $val;
     }
 
+    /**
+     * mode 1 解析方法
+     *
+     * @param KsfDispatcher $dispatcher            
+     */
     private function default_mode(KsfDispatcher $dispatcher)
     {
         $path = trim($dispatcher->path, '/');
@@ -70,6 +94,11 @@ class KsfRouter
         return $this->rewrite_check($scripts);
     }
 
+    /**
+     * mode2 解析方法
+     *
+     * @param KsfDispatcher $dispatcher            
+     */
     private function original_mode(KsfDispatcher $dispatcher)
     {
         $query = trim($dispatcher->query, '/');
@@ -90,6 +119,11 @@ class KsfRouter
         return $this->rewrite_check($scripts);
     }
 
+    /**
+     * mode3 解析方法
+     *
+     * @param KsfDispatcher $dispatcher            
+     */
     private function rewrite_mode(KsfDispatcher $dispatcher)
     {
         $path = trim($dispatcher->path, '/');
@@ -102,6 +136,11 @@ class KsfRouter
         return $this->rewrite_check($scripts);
     }
 
+    /**
+     * 非空校验 去除未设置值的key
+     * 
+     * @param unknown $scripts            
+     */
     private function rewrite_check($scripts)
     {
         if (! is_array($scripts))
@@ -114,6 +153,9 @@ class KsfRouter
         return $scripts;
     }
 
+    /**
+     * 计算查询参数
+     */
     private function getQuerys()
     {
         $tmp = array();

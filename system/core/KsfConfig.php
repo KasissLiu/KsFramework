@@ -48,8 +48,6 @@ class KsfConfig
     /**
      * 加载环境配置 .
      *
-     *
-     *
      * env
      */
     private function _initEnv()
@@ -175,10 +173,12 @@ class KsfConfig
     {
         $instance = self::getInstance();
         
-        if (file_exists(CONFIG_PATH . $config_file))
-            $user_config = require_once (CONFING_PATH . $config_file);
-        else
+        $config_file = trim($config_file,'.php').'.php';
+        if (file_exists(CONFIG_PATH . $config_file)) {
+            $user_config = require_once (CONFIG_PATH . $config_file);
+        } else {
             throw new KsfException("Config File Not Found!");
+        }
         
         if (is_array($user_config)) {
             foreach ($user_config as $prop => $value) {
@@ -193,7 +193,7 @@ class KsfConfig
             }
         }
         
-        return $prop_name ? $instance->get($prop_name) : true;
+        return $prop_name ? $instance->get($prop_name) : $user_config;
     }
 
     /**

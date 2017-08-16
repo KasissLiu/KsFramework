@@ -16,17 +16,7 @@ class Bootstrap
      */
     public function _initRouter()
     {
-        $Ksf = Ksf::getInstance();
-        $KsfConfig = KsfConfig::getInstance();
         
-        $dispatcher = Ksf::getDispatcher();
-        
-        $router = new KsfRouter($dispatcher, $KsfConfig->get('appRouterModule'));
-        
-        $router->module = $router->module ? $router->module : $KsfConfig->get("defaultModule");
-        $router->controller = $router->controller ? $router->controller : $KsfConfig->get("defaultController");
-        $router->action = $router->action ? $router->action : $KsfConfig->get("defaultAction");
-        $Ksf->set('router', $router);
     }
 
     /**

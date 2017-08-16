@@ -26,6 +26,8 @@ class Ksf
     private $actAction;
     // Request Dispatcher
     private $dispatcher;
+    // Request Params
+    private $params;
     // Hook for record errors
     private $errorHandle;
     // Logger
@@ -53,6 +55,14 @@ class Ksf
     public function Bootstrap()
     {
         try {
+            
+            $ksfConfig = KsfConfig::getInstance();
+            if (php_sapi_name() !== 'cli') {
+                $this->app_name = ! $this->app_name ? 'KsFramework' : $this->app_name;
+                $this->router = ! $this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
+                $this->input = ! $this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
+            }
+            
             if (file_exists(APP_PATH . 'Bootstrap.php')) {
                 require_once APP_PATH . 'Bootstrap.php';
                 
@@ -70,13 +80,7 @@ class Ksf
                 }
             }
             
-            $ksfConfig = KsfConfig::getInstance();
-            
-            if (php_sapi_name() !== 'cli') {
-                $this->app_name = ! $this->app_name ? 'KsFramework' : $this->app_name;
-                $this->router = ! $this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
-                $this->input = ! $this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
-            }
+            $this->params = $this->router->params;
             // set a logger if logger is not customed
             if (! $this->logger) {
                 $this->logger = KsfLoader::getInstance();
@@ -150,16 +154,16 @@ class Ksf
             
             $actController = $this->actController;
             $actAction = $this->actAction;
-
+            
             $run = new $actController();
             if (method_exists($run, $actAction)) {
                 $run->$actAction();
             } else {
-                throw new KsfException("There is no {$actAction} !");
+                throw new KsfException("There is no {$actAction} !",404);
             }
         } catch (KsfException $e) {
             $this->error = $e;
-            $this->transToError($this->router);
+            $e->transToError($this->router);
         } catch (Exception $e) {
             try {
                 throw new KsfException($e->getMessage(), $e->getCode(), $e);

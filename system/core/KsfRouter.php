@@ -19,6 +19,8 @@ class KsfRouter
 
     private $querys;
 
+    private $originUri;
+
     const DEFAULT_MODE = 1;
 
     const ORIGINAL_MODE = 2;
@@ -28,12 +30,11 @@ class KsfRouter
     public function __construct(KsfDispatcher $dispatcher, $uri_mode)
     {
         $scripts = $this->getRouter($dispatcher, $uri_mode);
+        $scripts = $this->uriMap($dispatcher);
         $this->querys = $this->getQuerys();
-        
         $this->module = isset($scripts[0]) ? $scripts[0] : KsfConfig::getInstance()->get('defaultModule');
         $this->controller = isset($scripts[1]) ? $scripts[1] : KsfConfig::getInstance()->get('defaultController');
-        $this->action = isset($scripts[2]) ? $scripts[2] : "";
-        KsfConfig::getInstance()->get('defaultAction');
+        $this->action = isset($scripts[2]) ? $scripts[2] : KsfConfig::getInstance()->get('defaultAction');
         
         return $this;
     }
@@ -66,7 +67,10 @@ class KsfRouter
     {
         $path = trim($dispatcher->path, '/');
         $this->querys = $dispatcher->query;
-        $scripts = explode('/', $path);
+        $params = explode('/', $path);
+        
+        $scripts = array_splice($params, 0, 3);
+        $this->getParams($params);
         
         return $this->rewrite_check($scripts);
     }
@@ -88,6 +92,7 @@ class KsfRouter
         } else {
             $scripts = array();
         }
+        $this->getParams(explode('/', trim($dispatcher->path, '/')));
         return $this->rewrite_check($scripts);
     }
 
@@ -96,9 +101,7 @@ class KsfRouter
         $path = trim($dispatcher->path, '/');
         $params = explode('/', $path);
         $scripts = array_splice($params, 0, 3);
-        for ($i = 0; $i < count($params); $i = $i + 2) {
-            $this->params[$params[$i]] = $params[$i + 1];
-        }
+        $this->getParams($params);
         $this->querys = $dispatcher->query;
         return $this->rewrite_check($scripts);
     }
@@ -112,7 +115,16 @@ class KsfRouter
             if ($val == null)
                 unset($scripts[$key]);
         }
+        
+        $this->originUri = $scripts;
         return $scripts;
+    }
+
+    private function getParams($params)
+    {
+        for ($i = 0; $i < count($params); $i = $i + 2) {
+            $this->params[$params[$i]] = isset($params[$i + 1]) ? $params[$i + 1] : "";
+        }
     }
 
     private function getQuerys()
@@ -129,5 +141,19 @@ class KsfRouter
             }
         }
         return $tmp;
+    }
+
+    private function uriMap($dispatcher)
+    {
+        $script = array();
+        $uriMap = KsfConfig::getInstance()->uri_map;
+        if (is_array($uriMap)) {
+            foreach ($uriMap as $req => $map) {
+                if (strstr($dispatcher->uri, $req)) {
+                    $script = explode('/', trim($map, '/'));
+                }
+            }
+        }
+        return $script ? $script : $this->originUri;
     }
 }

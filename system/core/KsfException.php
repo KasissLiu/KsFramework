@@ -27,7 +27,7 @@ class KsfException extends Exception
         $this->user_error_msg = $msg;
         
         if (is_object($data) && $data instanceof Exception) {
-            $this->user_error_traces = array_unique(array_merge($this->user_error_traces, $data->getTrace()));
+            $this->user_error_traces = array_merge($this->user_error_traces, $data->getTrace());
         } else {
             $this->user_error_data = $data;
         }

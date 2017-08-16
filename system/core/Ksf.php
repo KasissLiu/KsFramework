@@ -61,6 +61,7 @@ class Ksf
                 $this->app_name = ! $this->app_name ? 'KsFramework' : $this->app_name;
                 $this->router = ! $this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
                 $this->input = ! $this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
+                $this->params = $this->router->params;
             }
             
             if (file_exists(APP_PATH . 'Bootstrap.php')) {
@@ -80,7 +81,7 @@ class Ksf
                 }
             }
             
-            $this->params = $this->router->params;
+            
             // set a logger if logger is not customed
             if (! $this->logger) {
                 $this->logger = KsfLoader::getInstance();

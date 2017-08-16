@@ -38,8 +38,9 @@ class Bootstrap
         // 自定义template_dir
         $router = $Ksf->router;
         
-        if (is_dir(APP_PATH . "modules/" . strtolower($router->module) . "/views/"))
+        if ($router && is_dir(APP_PATH . "modules/" . strtolower($router->module) . "/views/")) {
             $smarty->setTemplateDir(APP_PATH . "modules/" . strtolower($router->module) . "/views/");
+        }
         
         $Ksf->set('render', $smarty);
     }

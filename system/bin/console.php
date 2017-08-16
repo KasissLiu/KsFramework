@@ -28,8 +28,25 @@ class KsfCLI
         'help' => 'KSF_CONSOLE_HELP',
         'server' => 'KSF_SERVER'
     );
+    
+    public static $colors = array(
+        'black'=>"\e[1;30m",
+        'red'=>"\e[1;31m",
+        'green'=>"\e[1;32m",
+        'yellow'=>"\e[1;33m",
+        'blue'=>"\e[1;34m",
+        'magenta'=>"\e[1;35m",
+        'cyan'=>"\e[1;36m",
+        'white'=>"\e[1;37m",
+        'normal'=>"\e[m"
+    );
 
     private static $legal_configs = array();
+    
+    public static function color_msg($msg,$color)
+    {
+        return isset(self::$colors[$color]) ? self::$colors[$color].$msg.self::$colors['normal'] : $msg;
+    }
 
     public function __construct()
     {
@@ -43,7 +60,7 @@ class KsfCLI
             $this->command_check();
             $this->execute();
         } catch (Exception $e) {
-            $message = $e->getMessage() . "\n type  '--help' for help \n";
+            $message = self::color_msg($e->getMessage(),'red') . "\n type  '--help' for help \n";
             $this->do_print($message);
         }
     }
@@ -138,7 +155,7 @@ class KsfCLI
      */
     public static function classRemap($class)
     {
-        return self::$commands[$class] ?  : null;
+        return isset(self::$commands[$class])  ?  self::$commands[$class] : null;
     }
 
     private function do_print($info = array())
@@ -167,17 +184,24 @@ class KSF_CONSOLE_HELP
 
     public function _help()
     {
-        $help_info = <<<EOF
-Type "--help" for basic help info;
+        $help_text = <<<EOF
+Type "%s" for basic help info;
 
-commands:
-      init       do a action to deploy all directories and files            
-      script     do a script running 
-      db         do a db command to manage tables
+Avilable Commands:
+      %s       do a action to deploy all directories and files
+      %s     do a script running 
+      %s         do a db command to manage tables
 
-Type "<command> --help" for command help info;
+Type "%s" for command help info;
 
 EOF;
+        $help_info = sprintf($help_text,
+            KsfCLI::color_msg('--help', 'yellow'),
+            KsfCLI::color_msg('init', 'green'),
+            KsfCLI::color_msg('script', 'green'),
+            KsfCLI::color_msg('db', 'green'),
+            KsfCLI::color_msg('<command> --help', 'yellow')
+        );
         print_r($help_info . "\n");
     }
 }
@@ -201,17 +225,28 @@ class KSF_CONSOLE_SCRIPT
 
     public function _help()
     {
-        $help_info = <<<EOF
+        $help_text= <<<EOF
 type 
-     script:<script path>:<mehtod> param=1 .....  
+     %s:%s:%s %s=1 .....  
      
      to load a script and run the method typed in. 
-     if method is null , 'run' will be the default method.
+     if method is null , '%s' will be the default method.
 
      the params will pass into the class as Array().
      
+     script basic path is %s, 
+     %s      
 
 EOF;
+        $help_info = sprintf($help_text,
+            KsfCLI::color_msg('script', 'green'),
+            KsfCLI::color_msg('<script path>', 'magenta'),
+            KsfCLI::color_msg('<mehtod>', 'blue'),
+            KsfCLI::color_msg('param', 'yellow'),
+            KsfCLI::color_msg('run', 'yellow'),
+            KsfCLI::color_msg('ROOT_PATH/console', 'red'),
+            KsfCLI::color_msg('please confirm the file is put in right place! ', 'red')
+        );
         print_r($help_info . "\n");
     }
 
@@ -279,15 +314,20 @@ class KSF_CONSOLE_INIT
 
     public function _help()
     {
-        $help_info = <<<EOF
+        $help_text = <<<EOF
 
 type "init" 
 
-   choose the configs
+   choose the %s
 
-   Then the program will make the basic directories and files and help you building an App
+   Then the program will make the basic directories and files 
+   to help you building an App in %s directory
 
 EOF;
+        $help_info = sprintf($help_text,
+            KsfCLI::color_msg('configs', 'yellow'),
+            KsfCLI::color_msg('current', 'red')
+        );
         print_r($help_info . "\n");
     }
 
@@ -333,7 +373,7 @@ EOF;
     private function _checkInit()
     {
         if (! is_writable(ROOT_PATH) || ! is_readable(ROOT_PATH)) {
-            print_r("Confirm the Directory is Writable and Readable !");
+            throw new Exception("Confirm the Directory is Writable and Readable !");
             die();
         }
     }
@@ -406,8 +446,10 @@ class KSF_SERVER
 
     public function _execute()
     {
+        
+        
         if (file_exists(ROOT_PATH . 'public')) {
-            print_r("\033[32m kasiss development server started: \e[m <http://127.0.0.1:8888>\n");
+            print_r(KsfCLI::color_msg('kasiss development server started:', 'green')." <http://127.0.0.1:8888>\n");
             exec("php -S 0.0.0.0:8888 -t " . ROOT_PATH . "public", $op);
         } else {
             throw new Exception('Path ./public not exists! Please try \'./system/bin/console init\' first! ');

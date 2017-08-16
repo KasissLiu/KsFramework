@@ -12,6 +12,10 @@ class KsfInput
     private $get = null;
 
     private $post = null;
+    
+    private $rawData = null;
+    
+    private $headers = null;
 
     const DEFAULT_MODE = 1;
 
@@ -23,6 +27,8 @@ class KsfInput
     {
         $this->get = $dispatcher->get;
         $this->post = $dispatcher->post;
+        $this->rawData = $dispatcher->rawData;
+        $this->headers = $dispatcher->headers;
         
         switch ($uri_mode) {
             case self::DEFAULT_MODE:

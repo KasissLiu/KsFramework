@@ -8,23 +8,23 @@
  */
 class KsfLogger
 {
-    //日志路径
+    // 日志路径
     private $logPath;
-    //日志基础名称
+    // 日志基础名称
     private $name;
-    //日志内容格式化类型
+    // 日志内容格式化类型
     private $format;
-    //日志分割类型
+    // 日志分割类型
     private $split;
-    //单例
+    // 单例
     private static $_instance;
-    //日志格式 json
+    // 日志格式 json
     const FORMAT_TYPE_JSON = 1;
-    //日志格式 text
+    // 日志格式 text
     const FORMAT_TYPE_TEXT = 2;
-    //日志按天分割
+    // 日志按天分割
     const SPLIT_TYPE_DAY = 1;
-    //日志按小时分割
+    // 日志按小时分割
     const SPLIT_TYPE_HOUR = 2;
 
     public function __construct()
@@ -37,10 +37,11 @@ class KsfLogger
 
     /**
      * 配置设置
-     * @param string $path
-     * @param string $name
-     * @param string $split
-     * @param string $format
+     * 
+     * @param string $path            
+     * @param string $name            
+     * @param string $split            
+     * @param string $format            
      */
     public function config($path = '', $name = '', $split = '', $format = '')
     {
@@ -62,35 +63,38 @@ class KsfLogger
 
     /**
      * 普通信息记录
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $msg            
+     * @param unknown $content            
      * @return boolean
      */
     public function info($msg, $content)
     {
-        return $this->writerLog('info',$msg,$content);
+        return $this->writerLog('info', $msg, $content);
     }
 
     /**
      * 调试信息记录
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $msg            
+     * @param unknown $content            
      * @return boolean
      */
     public function debug($msg, $content)
     {
-        return $this->writerLog('debug',$msg,$content);
+        return $this->writerLog('debug', $msg, $content);
     }
 
     /**
      * 错误信息记录
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $msg            
+     * @param unknown $content            
      * @return boolean
      */
     public function error($msg, $content)
     {
-        return $this->writerLog('error',$msg,$content);
+        return $this->writerLog('error', $msg, $content);
     }
 
     /**
@@ -110,26 +114,29 @@ class KsfLogger
 
     /**
      * 获取日志写入内容
-     * @param unknown $level
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $level            
+     * @param unknown $msg            
+     * @param unknown $content            
      */
     private function getContent($level, $msg, $content)
     {
-        switch($this->format) {
-            case self::FORMAT_TYPE_JSON :
+        switch ($this->format) {
+            case self::FORMAT_TYPE_JSON:
                 return $this->getJsonContent($level, $msg, $content);
-            case self::FORMAT_TYPE_TEXT :
+            case self::FORMAT_TYPE_TEXT:
                 return $this->getTextContent($level, $msg, $content);
-            default : 
+            default:
                 return null;
         }
     }
+
     /**
      * 获取text格式内容
-     * @param unknown $level
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $level            
+     * @param unknown $msg            
+     * @param unknown $content            
      */
     private function getTextContent($level, $msg, $content)
     {
@@ -139,17 +146,19 @@ class KsfLogger
         $info['@timestamp'] = date('Y-m-d H:i:s');
         $info['@data'] = json_encode($content);
         
-        $content = '['.date('Y-m-d H:i:s').']';
-        foreach($info as $key=>$val) {
-            $content.= $key.':'.$val.';';
+        $content = '[' . date('Y-m-d H:i:s') . ']';
+        foreach ($info as $key => $val) {
+            $content .= $key . ':' . $val . ';';
         }
         return $content;
     }
+
     /**
      * 获取json格式内容
-     * @param unknown $level
-     * @param unknown $msg
-     * @param unknown $content
+     * 
+     * @param unknown $level            
+     * @param unknown $msg            
+     * @param unknown $content            
      */
     private function getJsonContent($level, $msg, $content)
     {
@@ -161,11 +170,13 @@ class KsfLogger
         
         return json_encode($info);
     }
+
     /**
      * 写入日志
-     * @param string $level
-     * @param string $msg
-     * @param string $content
+     * 
+     * @param string $level            
+     * @param string $msg            
+     * @param string $content            
      */
     private function writerLog($level = 'info', $msg = '', $content = '')
     {
@@ -173,8 +184,8 @@ class KsfLogger
         $filename = rtrim($this->logPath, '/') . '/' . $name;
         $message = $this->getContent($level, $msg, $content);
         
-        $fp = fopen($filename,"a+");
-        fputs($fp, $message."\n");
+        $fp = fopen($filename, "a+");
+        fputs($fp, $message . "\n");
         fclose($fp);
         return true;
     }

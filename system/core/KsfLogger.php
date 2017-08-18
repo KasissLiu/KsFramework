@@ -37,7 +37,7 @@ class KsfLogger
 
     /**
      * 配置设置
-     * 
+     *
      * @param string $path            
      * @param string $name            
      * @param string $split            
@@ -63,7 +63,7 @@ class KsfLogger
 
     /**
      * 普通信息记录
-     * 
+     *
      * @param unknown $msg            
      * @param unknown $content            
      * @return boolean
@@ -75,7 +75,7 @@ class KsfLogger
 
     /**
      * 调试信息记录
-     * 
+     *
      * @param unknown $msg            
      * @param unknown $content            
      * @return boolean
@@ -87,7 +87,7 @@ class KsfLogger
 
     /**
      * 错误信息记录
-     * 
+     *
      * @param unknown $msg            
      * @param unknown $content            
      * @return boolean
@@ -114,7 +114,7 @@ class KsfLogger
 
     /**
      * 获取日志写入内容
-     * 
+     *
      * @param unknown $level            
      * @param unknown $msg            
      * @param unknown $content            
@@ -133,7 +133,7 @@ class KsfLogger
 
     /**
      * 获取text格式内容
-     * 
+     *
      * @param unknown $level            
      * @param unknown $msg            
      * @param unknown $content            
@@ -155,7 +155,7 @@ class KsfLogger
 
     /**
      * 获取json格式内容
-     * 
+     *
      * @param unknown $level            
      * @param unknown $msg            
      * @param unknown $content            
@@ -173,7 +173,7 @@ class KsfLogger
 
     /**
      * 写入日志
-     * 
+     *
      * @param string $level            
      * @param string $msg            
      * @param string $content            
@@ -184,8 +184,10 @@ class KsfLogger
         $filename = rtrim($this->logPath, '/') . '/' . $name;
         $message = $this->getContent($level, $msg, $content);
         
-        $fp = fopen($filename, "a+");
+        $fp = @fopen($filename, "a+");
+        flock($fp, LOCK_EX);
         fputs($fp, $message . "\n");
+        flock($fp, LOCK_UN);
         fclose($fp);
         return true;
     }

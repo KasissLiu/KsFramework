@@ -75,7 +75,7 @@ class KsfLoader
             "appAutoLoader"
         ));
         spl_autoload_register(array(
-            "ksfLoader",
+            "KsfLoader",
             "modelAutoLoader"
         ));
     }

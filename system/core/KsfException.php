@@ -8,31 +8,31 @@
 class KsfException extends Exception
 {
 
-    const SYS_ERROR = 500;
+    const SYS_ERROR = 500; //系统错误
 
-    const CONFIG_ERROR = 501;
+    const CONFIG_ERROR = 501; //配置错误
 
-    protected $user_error_data = null;
+    protected $userErrorData = null;
 
-    protected $user_error_traces = array();
+    protected $userErrorTraces = array();
 
-    protected $user_error_msg = null;
+    protected $userErrorMsg = null;
 
-    protected $user_error_occured = null;
+    protected $userErrorOccured = null;
 
     public function __construct($msg = "", $code = 0, $data = "")
     {
         ! $code && $code = self::SYS_ERROR;
         parent::__construct($msg, $code);
-        $this->user_error_msg = $msg;
+        $this->userErrorMsg = $msg;
         
         if (is_object($data) && $data instanceof Exception) {
-            $this->user_error_traces = array_merge($this->user_error_traces, $data->getTrace());
+            $this->userErrorTraces = array_merge($this->userErrorTraces, $data->getTrace());
         } else {
-            $this->user_error_data = $data;
+            $this->userErrorData = $data;
         }
         
-        $this->user_error_occured = "Line: " . $this->getLine() . " in File " . $this->getFile();
+        $this->userErrorOccured = "Line: " . $this->getLine() . " in File " . $this->getFile();
         
         $this->handle();
         
@@ -131,7 +131,7 @@ class KsfException extends Exception
      */
     public function getErrorMessage()
     {
-        return $this->user_error_msg;
+        return $this->userErrorMsg;
     }
 
     /**
@@ -141,7 +141,7 @@ class KsfException extends Exception
      */
     public function getErrorData()
     {
-        return $this->user_error_data;
+        return $this->userErrorData;
     }
 
     /**
@@ -149,7 +149,7 @@ class KsfException extends Exception
      */
     public function getErrorTrace()
     {
-        return array_merge($this->user_error_traces, $this->getTrace());
+        return array_merge($this->userErrorTraces, $this->getTrace());
     }
 
     /**
@@ -157,6 +157,6 @@ class KsfException extends Exception
      */
     public function getErrorOccured()
     {
-        return $this->user_error_occured;
+        return $this->userErrorOccured;
     }
 }

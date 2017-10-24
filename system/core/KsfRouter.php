@@ -188,7 +188,7 @@ class KsfRouter
     private function uriMap($dispatcher)
     {
         $script = array();
-        $uriMap = KsfConfig::getInstance()->uri_map;
+        $uriMap = KsfConfig::getInstance()->uriMap;
         if (is_array($uriMap)) {
             foreach ($uriMap as $req => $map) {
                 if (strstr($dispatcher->uri, $req)) {

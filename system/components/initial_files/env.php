@@ -53,6 +53,8 @@ dbname        = dbname
 port          = 3306
 charset       = utf8
 init          = true
+
+[uriMap]
 EOF;
 
 return $content;

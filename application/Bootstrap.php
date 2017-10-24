@@ -54,16 +54,16 @@ class Bootstrap
     {
         $Ksf = Ksf::getInstance();
         $servers = KsfConfig::getInstance()->get('servers');
-        foreach ($servers as $server_name => $server) {
+        foreach ($servers as $serverName => $server) {
             if (! $server['init'])
                 continue;
             
             $server_type = 'server_' . $server['type'];
             if (class_exists($server_type)) {
                 $server_obj = new $server_type($server);
-                $Ksf->set($server_name, $server_obj);
+                $Ksf->set($serverName, $server_obj);
             } else {
-                throw new KsfException('can not make server ' . $server_name);
+                throw new KsfException('can not make server ' . $serverName);
             }
         }
     }

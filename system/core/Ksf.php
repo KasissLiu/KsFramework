@@ -9,7 +9,7 @@
 class Ksf
 {
     // App Name
-    private $app_name;
+    private $appName;
     // App Router
     private $router;
     // App Input
@@ -58,7 +58,7 @@ class Ksf
             
             $ksfConfig = KsfConfig::getInstance();
             if (php_sapi_name() !== 'cli') {
-                $this->app_name = ! $this->app_name ? 'KsFramework' : $this->app_name;
+                $this->appName = ! $this->appName ? 'KsFramework' : $this->appName;
                 $this->router = ! $this->router ? new KsfRouter(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->router;
                 $this->input = ! $this->input ? new KsfInput(self::getDispatcher(), $ksfConfig->get('appRouterModule')) : $this->input;
                 $this->params = $this->router->params;

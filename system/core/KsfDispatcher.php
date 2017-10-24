@@ -24,6 +24,9 @@ class KsfDispatcher
     
     private $uri = null;
 
+    /**
+     * to dispatch request and store datas
+     */
     public function __construct()
     {
         if (php_sapi_name() !== 'cli') {

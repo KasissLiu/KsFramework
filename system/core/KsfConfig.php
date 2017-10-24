@@ -48,6 +48,7 @@ class KsfConfig
     /**
      * 加载环境配置 .
      *
+     *
      * env
      */
     private function _initEnv()
@@ -118,10 +119,8 @@ class KsfConfig
     /**
      * 用户可自定义添加配置
      *
-     * @param
-     *            $prop
-     * @param
-     *            $value
+     * @param $prop
+     * @param $value
      */
     public function set($prop, $value)
     {
@@ -131,8 +130,7 @@ class KsfConfig
     /**
      * 用户通过属性名 获取配置内容
      *
-     * @param
-     *            $prop
+     * @param $prop
      * @return null
      */
     public function get($prop)
@@ -144,13 +142,12 @@ class KsfConfig
      * 用户根据配置文件中的server名称
      * 取相应配置
      *
-     * @param
-     *            $server_name
+     * @param $serverName
      * @return null
      */
-    public function getServerConfig($server_name)
+    public function getServerConfig($serverName)
     {
-        return isset($this->servers[$server_name]) ? $this->servers[$server_name] : null;
+        return isset($this->servers[$serverName]) ? $this->servers[$serverName] : null;
     }
 
     /**
@@ -173,7 +170,7 @@ class KsfConfig
     {
         $instance = self::getInstance();
         
-        $config_file = trim($config_file,'.php').'.php';
+        $config_file = trim($config_file, '.php') . '.php';
         if (file_exists(CONFIG_PATH . $config_file)) {
             $user_config = require_once (CONFIG_PATH . $config_file);
         } else {

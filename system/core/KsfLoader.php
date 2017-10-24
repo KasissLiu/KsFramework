@@ -112,8 +112,7 @@ class KsfLoader
     /**
      * 文件加载函数
      *
-     * @param
-     *            $file
+     * @param $file
      * @return bool
      */
     public static function import($file)
@@ -122,15 +121,14 @@ class KsfLoader
             include_once $file;
             return true;
         } else {
-            throw new Exception("Loader: {$file}  is not exist");
+            throw new KsfException("Loader: {$file}  is not exist");
         }
     }
 
     /**
      * 系统类 自动加载函数
      *
-     * @param
-     *            $class
+     * @param $class
      * @throws Exception
      */
     public static function sysAutoLoader($class)
@@ -144,8 +142,7 @@ class KsfLoader
     /**
      * 应用资源库 自动加载函数
      *
-     * @param
-     *            $class
+     * @param $class
      */
     public static function appAutoLoader($class)
     {
@@ -170,12 +167,7 @@ class KsfLoader
     {
         $path = str_replace('Model', '', $class);
         if (strpos($path, '_') > 0) {
-            $file = explode('_', $path);
-            $filename = '';
-            foreach ($file as $val) {
-                $filename .= $val . "/";
-            }
-            $filename = rtrim($filename, '/');
+            $filename = str_replace('_', '/', $path);
         } else {
             $filename = $path;
         }

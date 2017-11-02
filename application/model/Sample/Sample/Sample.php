@@ -7,4 +7,8 @@
  */
 class Sample_Sample_SampleModel
 {
+    public static function test()
+    {
+        return "hello kasiss!";
+    }
 }

@@ -4,6 +4,9 @@
  * 默认控制器
  * 如果存在init方法 则init方法会最先执行
  */
+
+use Kasiss\Tools\Area;
+
 class IndexController extends KsfController
 {
 
@@ -12,7 +15,9 @@ class IndexController extends KsfController
 
     public function indexAction()
     {
-        echo "hello world!";
+        $area = new Area();
+        var_dump($area->getProvinces());
+       
     }
 
     public function testAction()

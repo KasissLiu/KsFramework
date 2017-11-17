@@ -4,8 +4,14 @@
   "version" : "1.0.1",
   "require" : {
     "php" : ">=5.3",
-    "smarty/smarty" : "3.1.27"
+    "smarty/smarty" : "3.1.27",
+    "kasiss/tools": "dev-master"
   },
   "type" : "project",
-  "homepage" : "http://kasiss.cn"
+  "homepage" : "http://kasiss.cn",
+  "autoload": {
+  	"psr-0":{
+  		"App\\":"application"
+  	}
+  }
 }

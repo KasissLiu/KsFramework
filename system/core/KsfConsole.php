@@ -8,18 +8,18 @@
 class KsfConsole
 {
 
-    protected $max_runtime;
+    protected $maxRuntime;
 
-    protected $start_time;
+    protected $startTime;
 
-    protected $end_time;
+    protected $endTime;
 
     public function __construct()
     {
         if (php_sapi_name() !== 'cli')
             throw new Exception("NEED CLI ENV!");
         
-        $this->start_time = time();
+        $this->startTime = time();
         if (method_exists($this, "init"))
             $this->init();
     }
@@ -32,11 +32,11 @@ class KsfConsole
     public function setMaxTime($time)
     {
         set_time_limit($time + 60);
-        $this->max_runtime = $time;
+        $this->maxRuntime = $time;
     }
 
     public function checkRunTime()
     {
-        return (time() - $this->start_time) > $this->max_runtime ? true : false;
+        return (time() - $this->startTime) > $this->maxRuntime ? true : false;
     }
 }

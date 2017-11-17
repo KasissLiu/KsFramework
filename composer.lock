@@ -4,8 +4,41 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5563ec607e1baa718f1d3702d375ffa",
+    "content-hash": "ba99c4fc08b01d7a6057e103ac3ed44f",
     "packages": [
+        {
+            "name": "kasiss/tools",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KasissLiu/Tools.git",
+                "reference": "0c7aa46f7bd192b8f924a91d63ba9f25865b91bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://files.phpcomposer.com/files/KasissLiu/Tools/0c7aa46f7bd192b8f924a91d63ba9f25865b91bf.zip",
+                "reference": "0c7aa46f7bd192b8f924a91d63ba9f25865b91bf",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kasiss\\Tools\\": "simpleTools/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "kasiss",
+                    "email": "xueyezhishang@163.com"
+                }
+            ],
+            "description": "useful tools",
+            "time": "2017-10-17 06:17:02"
+        },
         {
             "name": "smarty/smarty",
             "version": "v3.1.27",
@@ -65,7 +98,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kasiss/tools": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

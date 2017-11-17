@@ -838,7 +838,7 @@ class server_mysqli
             "DESC"
         );
         $orderbyDirection = strtoupper(trim($orderbyDirection));
-        $orderByField = preg_replace("/[^-a-z0-9\.\(\),_`\*]+/i", '', $orderByField);
+        $orderByField = preg_replace('/[^-a-z0-9\.\(\),_`\*]+/i', '', $orderByField);
         
         // Add table prefix to orderByField if needed.
         // FIXME: We are adding prefix only if table is enclosed into `` to distinguish aliases
@@ -850,7 +850,7 @@ class server_mysqli
         
         if (is_array($customFields)) {
             foreach ($customFields as $key => $value)
-                $customFields[$key] = preg_replace("/[^-a-z0-9\.\(\),_`]+/i", '', $value);
+                $customFields[$key] = preg_replace('/[^-a-z0-9\.\(\),_`]+/i', '', $value);
             
             $orderByField = 'FIELD (' . $orderByField . ', "' . implode('","', $customFields) . '")';
         }
@@ -871,7 +871,7 @@ class server_mysqli
      */
     public function groupBy($groupByField)
     {
-        $groupByField = preg_replace("/[^-a-z0-9\.\(\),_\*]+/i", '', $groupByField);
+        $groupByField = preg_replace('/[^-a-z0-9\.\(\),_\*]+/i', '', $groupByField);
         
         $this->_groupBy[] = $groupByField;
         return $this;
@@ -1096,7 +1096,7 @@ class server_mysqli
             return array();
         
         $row = array();
-        while ($field = $meta->fetch_field()) {
+        while (($field = $meta->fetch_field()) == true) {
             if ($field->type == $mysqlLongType)
                 $shouldStoreResult = true;
             
@@ -1439,13 +1439,16 @@ class server_mysqli
         $i = 1;
         $newStr = "";
         
-        while ($pos = strpos($str, "?")) {
-            $val = $vals[$i ++];
-            if (is_object($val))
-                $val = '[object]';
-            if ($val === NULL)
-                $val = 'NULL';
-            $newStr .= substr($str, 0, $pos) . "'" . $val . "'";
+        while (($pos = strpos($str, "?")) == true) {
+            $n = $i++;
+            if(isset($vals[$n])) {
+                $val = $vals[$n];
+                if (is_object($val))
+                    $val = '[object]';
+                if ($val === NULL)
+                    $val = 'NULL';
+                $newStr .= substr($str, 0, $pos) . "'" . $val . "'";
+            }
             $str = substr($str, $pos + 1);
         }
         $newStr .= $str;

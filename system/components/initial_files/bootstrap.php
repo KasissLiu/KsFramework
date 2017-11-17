@@ -20,17 +20,7 @@ class Bootstrap
      */
     public function _initRouter()
     {
-        \$Ksf = Ksf::getInstance();
-        \$KsfConfig = KsfConfig::getInstance();
-
-        \$dispatcher = Ksf::getDispatcher();
-
-        \$router = new KsfRouter(\$dispatcher,\$KsfConfig->get('appRouterModule'));
-
-        \$router->module = \$router->module ?  \$router->module : \$KsfConfig->get("defaultModule");
-        \$router->controller = \$router->controller ? \$router->controller : \$KsfConfig->get("defaultController");
-        \$router->action = \$router->action ? \$router->action : \$KsfConfig->get("defaultAction");
-        \$Ksf->set('router',\$router);
+        
     }
 
 
@@ -55,8 +45,9 @@ class Bootstrap
         //自定义template_dir
         \$router = \$Ksf->router;;
 
-        if(is_dir(APP_PATH."modules/".strtolower(\$router->module)."/views/"))
+        if(\$router && is_dir(APP_PATH."modules/".strtolower(\$router->module)."/views/")) {
             \$smarty->setTemplateDir(APP_PATH."modules/".strtolower(\$router->module)."/views/");
+        }
 
 
         \$Ksf->set('render',\$smarty);
@@ -70,7 +61,7 @@ class Bootstrap
     {
         \$Ksf = Ksf::getInstance();
         \$servers = KsfConfig::getInstance()->get('servers');
-        foreach(\$servers as \$server_name => \$server)
+        foreach(\$servers as \$serverName => \$server)
         {
             if(!\$server['init'])
                 continue;
@@ -80,9 +71,9 @@ class Bootstrap
                 if(class_exists(\$server_type))
                 {
                     \$server_obj = new \$server_type(\$server);
-                    \$Ksf->set(\$server_name, \$server_obj);
+                    \$Ksf->set(\$serverName, \$server_obj);
                 }else{ 
-                    throw new KsfException('can not make server '.\$server_name);
+                    throw new KsfException('can not make server '.\$serverName);
                 }
             }catch( KsfException \$e){
                 print_r(\$e->getMessage());

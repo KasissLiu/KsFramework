@@ -46,8 +46,8 @@ class KsfException extends Exception
      */
     public function transToError($router)
     {
-        if (file_exists(APP_PATH . "modules/" . $router->module . "/controllers/Error.php")) {
-            include_once APP_PATH . "modules/" . $router->module . "/controllers/Error.php";
+        if (file_exists(APP_PATH . "modules/" . ucfirst($router->module) . "/controllers/Error.php")) {
+            include_once APP_PATH . "modules/" . ucfirst($router->module) . "/controllers/Error.php";
             call_user_func(array(
                 new ErrorController(),
                 'ErrorAction'

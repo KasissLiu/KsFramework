@@ -1,4 +1,4 @@
-# KsFramework
+# ks-framework
 自己闲来无事，自己写一个框架打发时间
 
 执行命令 获取帮助信息
